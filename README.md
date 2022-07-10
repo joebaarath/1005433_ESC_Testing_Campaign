@@ -13,6 +13,9 @@ The current implementation expects the following format for the csv file: "Custo
 ### Getting Started
 Ensure you are using Java version 17 or higher and Oracle openJdk 18 or higher.
 1. Clone repo
+```
+git clone https://github.com/joebaarath/1005433_ESC_Testing_Campaign
+```
 
 ### Method 1: Running reconcillation via Command Line using jar artefact
 1. Open cmd line and navigate to git project folder
