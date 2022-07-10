@@ -1,0 +1,10 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="Reconciliation" type="Application" factoryName="Application">
+    <option name="MAIN_CLASS_NAME" value="com.esc.campaign.Main" />
+    <module name="Reconcillation" />
+    <option name="PROGRAM_PARAMETERS" value="&quot;sample_file_1.csv&quot; &quot;sample_file_3.csv&quot;" />
+    <method v="2">
+      <option name="Make" enabled="true" />
+    </method>
+  </configuration>
+</component>

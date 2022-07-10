@@ -1,6 +1,0 @@
-mismatched,file1,line100,"ID99","BOS8059799","SGD","CURRENT","208045"
-mismatched,file2,line100,"ID99","BOS8059799","SGD","CURRENT","208043"
-mismatched,file1,line199,"ID198","BOS30360198","USD","CURRENT","679878"
-mismatched,file2,line199,"ID198","BOS30360198","USD","CURRENT","6798788"
-missing,file1,line299,"ID298","BOS50591298","CHF","SAVINGS","988459"
-missing,file2,line299,"ID298","BOS50591298","USD","SAVINGS","988459"
