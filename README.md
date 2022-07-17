@@ -10,6 +10,9 @@ The current implementation expects the following format for the csv file: "Custo
 ### Use Case Diagram
 <img src="./Documents/WK08_ESC_CAMPAGIN_USECASE_DIAGRAM.jpg" />
 
+### Equivalence class partitioning and boundary value analysis
+[BoundaryValueAnalysis_and_EquivalenceClassPartitioning](./Documents/WK09_BoundaryValueAnalysis_and_EquivalenceClassPartitioning_V2.docx)  
+
 ### Getting Started
 Ensure you are using Java version 17 or higher and Oracle openJdk 18 or higher.
 1. Clone repo
