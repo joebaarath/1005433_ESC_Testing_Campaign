@@ -8,7 +8,7 @@ This reconcillation system will compare 2 csv files.
 The current implementation expects the following format for the csv file: "Customer ID#",	"Account No.",	"Currency",	"Type",	"Balance"
 
 ### Use Case Diagram
-<img src="./images/ESC_CAMPAGIN_USECASE_DIAGRAM.jpg" />
+<img src="./Documents/WK08_ESC_CAMPAGIN_USECASE_DIAGRAM.jpg" />
 
 ### Getting Started
 Ensure you are using Java version 17 or higher and Oracle openJdk 18 or higher.
