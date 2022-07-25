@@ -1,8 +1,0 @@
-<component name="ArtifactManager">
-  <artifact type="jar" build-on-make="true" name="Reconcillation:jar">
-    <output-path>$PROJECT_DIR$/out/artifacts/Reconcillation_jar</output-path>
-    <root id="archive" name="Reconcillation.jar">
-      <element id="module-output" name="Reconcillation" />
-    </root>
-  </artifact>
-</component>
