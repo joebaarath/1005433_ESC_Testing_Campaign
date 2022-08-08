@@ -65,6 +65,27 @@ public class Reconciliation {
 
     }
 
+
+
+    private String getCommaSeperatedStringFromArray(String[] arr1, int start_index,int end_index){
+        String concat_str = "";
+        for(int i=start_index;i<=end_index;i++){
+            concat_str+=","+String.valueOf(arr1[i]);
+        }
+        return concat_str;
+    }
+
+    private boolean checkArrayStringMatch(String[] arr1, String[] arr2,int start_index,int end_index){
+
+        for(int i=start_index;i<=end_index;i++){
+            if(!arr1[i].equals(arr2[i])){
+                return false;
+            }
+        }
+        return true;
+    }
+
+
     private boolean doesFileExists(int index, String[] args) {
         Path file = Path.of(args[index]);
         boolean fileExists = Files.exists(file);
@@ -200,8 +221,6 @@ public class Reconciliation {
 
             mergeDuplicateArrays(array1_duplicates, 1, File1);
             mergeDuplicateArrays(array2_duplicates, 2, File2);
-//            Collections.sort(outputDuplicateArray);
-
 
             for (int i = 0; i < array1.length; i++) {
                 //assuming columns are in the same order for the 2 files
@@ -210,11 +229,11 @@ public class Reconciliation {
                     for (int j = 0; j < array2.length; j++) {
                         if(array2[j][0] == "unchecked"){
 
-                            if(array1[i][2].equals(array2[j][2]) && array1[i][3].equals(array2[j][3]) && array1[i][4].equals(array2[j][4]) && array1[i][5].equals(array2[j][5])  ){
+                            if(checkArrayStringMatch(array1[i],array2[j],2,array1[0].length-2)){
 
                                 //check if balance is same or not
                                 //assumption: string comparison is sufficient
-                                if(array1[i][6].equals(array2[j][6])){
+                                if(array1[i][array1[0].length-1].equals(array2[j][array1[0].length-1])){
                                     //match
                                     array1[i][0]="matched";
                                     array2[j][0]="matched";
@@ -225,8 +244,8 @@ public class Reconciliation {
                                     array1[i][0]="mismatched";
                                     array2[j][0]="mismatched";
                                     //add to new outputarray
-                                    outputMismatchArray.add("mismatched_value,file1,"+File1.toAbsolutePath().toString()+","+array1[i][1]+","+array1[i][2]+","+array1[i][3]+","+array1[i][4]+","+array1[i][5]+","+array1[i][6]);
-                                    outputMismatchArray.add("mismatched_value,file2,"+File2.toAbsolutePath().toString()+","+array2[j][1]+","+array2[j][2]+","+array2[j][3]+","+array2[j][4]+","+array2[j][5]+","+array2[j][6]);
+                                    outputMismatchArray.add("mismatched_value,file1,"+File1.toAbsolutePath().toString()+getCommaSeperatedStringFromArray(array1[i],1,array1[i].length-1));
+                                    outputMismatchArray.add("mismatched_value,file2,"+File2.toAbsolutePath().toString()+getCommaSeperatedStringFromArray(array2[j],1,array2[j].length-1));
                                 }
                                 //break out of for loop
                                 break;
@@ -238,7 +257,7 @@ public class Reconciliation {
                     if(array1[i][0] == "unchecked"){
                         array1[i][0] = "missing";
                         //add to new outputarray
-                        outputFile1MissingArray.add("exists_in_file1_but_missing_in_file2,file1,"+File1.toAbsolutePath().toString()+","+array1[i][1]+","+array1[i][2]+","+array1[i][3]+","+array1[i][4]+","+array1[i][5]+","+array1[i][6]);
+                        outputFile1MissingArray.add("exists_in_file1_but_missing_in_file2,file1,"+File1.toAbsolutePath().toString()+getCommaSeperatedStringFromArray(array1[i],1,array1[i].length-1));
                     }
                 }
             }
@@ -247,7 +266,7 @@ public class Reconciliation {
                 if (array2[j][0] == "unchecked") {
                     array2[j][0] = "missing";
                     //add to new outputarray
-                    outputFile2MissingArray.add("exists_in_file2_but_missing_in_file1,file2,"+File2.toAbsolutePath().toString()+","+array2[j][1]+","+array2[j][2]+","+array2[j][3]+","+array2[j][4]+","+array2[j][5]+","+array1[j][6]);
+                    outputFile2MissingArray.add("exists_in_file2_but_missing_in_file1,file2,"+File2.toAbsolutePath().toString()+getCommaSeperatedStringFromArray(array2[j],1,array2[j].length-1));
                 }
             }
 
@@ -274,7 +293,7 @@ public class Reconciliation {
 
         for (int i = 0; i < array1_duplicates.size(); i++) {
             String[] array1_duplicates_arr = (String[]) array1_duplicates.get(i);
-            outputDuplicateArray.add("ambiguous_duplicate_identifier,file"+String.valueOf(fileCount)+","+File1.toAbsolutePath().toString()+","+array1_duplicates_arr[1]+","+array1_duplicates_arr[2]+","+array1_duplicates_arr[3]+","+array1_duplicates_arr[4]+","+array1_duplicates_arr[5]+","+array1_duplicates_arr[6]);
+            outputDuplicateArray.add("ambiguous_duplicate_identifier,file"+String.valueOf(fileCount)+","+File1.toAbsolutePath().toString()+getCommaSeperatedStringFromArray(array1_duplicates_arr,1,array1_duplicates_arr.length-1));
         }
     }
 
@@ -283,7 +302,7 @@ public class Reconciliation {
             if (array_2[j][0] == "unchecked") {
                 for (int i = 0; i < array1_duplicates_unique_identifiers.size(); i++) {
                     String [] array1_duplicates_unique_identifiers_arr = (String[]) array1_duplicates_unique_identifiers.get(i);
-                    if(array1_duplicates_unique_identifiers_arr[2].equals(array_2[j][2]) && array1_duplicates_unique_identifiers_arr[3].equals(array_2[j][3]) && array1_duplicates_unique_identifiers_arr[4].equals(array_2[j][4]) && array1_duplicates_unique_identifiers_arr[5].equals(array_2[j][5])  ){
+                    if(checkArrayStringMatch(array1_duplicates_unique_identifiers_arr,array2[j],2,array2[0].length-2)){
                         array_2[j][0] = "duplicate";
                         array2_duplicates.add(array_2[j]);
                     }
@@ -302,7 +321,7 @@ public class Reconciliation {
                 for (int i_dup = 0; i_dup < array1.length; i_dup++) {
                     //assuming columns are in the same order for the 2 files
                     if (i != i_dup && array1[i_dup][0] == "unchecked") {
-                        if(array1[i][2].equals(array1[i_dup][2]) && array1[i][3].equals(array1[i_dup][3]) && array1[i][4].equals(array1[i_dup][4])  && array1[i][5].equals(array1[i_dup][5]) ){
+                        if(checkArrayStringMatch(array1[i],array1[i_dup],2,array1[0].length-2)){
                             if (array1[i][0] == "unchecked") {
                                 array1[i][0] = "duplicate";
                                 array1_list_dup.add(array1[i]);
@@ -323,7 +342,6 @@ public class Reconciliation {
     public boolean generateOutputFile(String OutputFilePath) throws IOException {
         try{
             outputArray = new ArrayList<>();
-            // mismatched,file1,"+File1.toAbsolutePath().toString()+",line"+Integer.toString(i+1)+","+array1[i][1]+","+array1[i][2]+","+array1[i][3]+","+array1[i][4]+","+array1[i][5]
             String colString = "";
             for (int i=1; i<array1[0].length-1; i++){
                 if(i<array1[0].length-2){

@@ -113,7 +113,8 @@ public class ReconciliationTest {
                 Arguments.of("sample_file_1.csv","sample_file_1.csv",true,0,0,0,0),
                 Arguments.of("sample_file_3.csv","sample_file_3.csv",true,0,0,0,0),
                 Arguments.of("valid_file_2_5cols_5rows.csv","valid_file_3_3cols_3rows.csv",false,0,0,0,0),
-                Arguments.of("valid_file_4_5cols_6rows_duplicate_row.csv","valid_file_5_5cols_6rows_duplicate_row_2.csv",true,10,0,0,0)
+                Arguments.of("valid_file_4_5cols_6rows_duplicate_row.csv","valid_file_5_5cols_6rows_duplicate_row_2.csv",true,10,0,0,0),
+                Arguments.of("valid_file_6_10cols_5rows.csv","valid_file_7_10cols_5rows_2.csv",true,4,2,1,2)
 
         );
     }

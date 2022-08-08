@@ -19,7 +19,7 @@ public class SystemTest {
     File jar_file;
     ProcessBuilder pb;
     Process proc;
-    File outputFile = new File("output_system_test.csv");
+    File outputFile = new File("output.csv");
 
     @BeforeAll
     public void preTest() throws Exception {
@@ -65,16 +65,17 @@ public class SystemTest {
 
     public static Stream<Arguments> generateExpectedComparisonInFile() {
         return Stream.of(
-                Arguments.of("sample_file_1.csv", "sample_file_3.csv", 4, 1, 1, 0),
+                Arguments.of("sample_file_1.csv", "sample_file_3.csv", 0, 4, 1, 1),
                 Arguments.of("sample_file_1.csv", "sample_file_1.csv", 0, 0, 0, 0),
                 Arguments.of("sample_file_3.csv", "sample_file_3.csv", 0, 0, 0, 0),
-                Arguments.of("valid_file_4_5cols_6rows_duplicate_row.csv", "valid_file_5_5cols_6rows_duplicate_row_2.csv", 0, 0, 0, 10)
+                Arguments.of("valid_file_4_5cols_6rows_duplicate_row.csv", "valid_file_5_5cols_6rows_duplicate_row_2.csv", 10, 0, 0, 0),
+                Arguments.of("valid_file_6_10cols_5rows.csv","valid_file_7_10cols_5rows_2.csv",4,2,1,2)
         );
     }
 
-    @ParameterizedTest(name = "{index} - generateExpectedComparisonInFile file1={0}, file2={1}, expectedMismatchedCount={2}, expectedMismatchedCount={3}")
+    @ParameterizedTest(name = "{index} - generateExpectedComparisonInFile file1={0}, file2={1}, expectedDuplicateCount={2} expectedMismatchedCount={3}, expected_in_file1_but_missing_in_file2_count={4}, expected_in_file2_but_missing_in_file1_count={5} ")
     @MethodSource
-    void generateExpectedComparisonInFile(String filepath1, String filepath2, Integer expected_mismatched_differences_count, Integer expected_in_file1_but_missing_in_file2_count, Integer expected_in_file2_but_missing_in_file1_count, Integer expected_ambiguous_duplicate_identifier_count) throws Exception {
+    void generateExpectedComparisonInFile(String filepath1, String filepath2, Integer expected_ambiguous_duplicate_identifier_count, Integer expected_mismatched_differences_count, Integer expected_in_file1_but_missing_in_file2_count, Integer expected_in_file2_but_missing_in_file1_count) throws Exception {
         int mismatched_differences_count = 0;
         int exists_in_file2_but_missing_in_file1_count = 0;
         int exists_in_file1_but_missing_in_file2_count = 0;

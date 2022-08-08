@@ -58,7 +58,6 @@ public class Main {
                 }
                 else {
                     System.out.println(outputFilePath +" file successfully generated");
-
                 }
             }
             catch (Exception e){
