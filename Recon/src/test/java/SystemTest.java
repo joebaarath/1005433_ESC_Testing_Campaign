@@ -19,7 +19,7 @@ public class SystemTest {
     File jar_file;
     ProcessBuilder pb;
     Process proc;
-    File outputFile = new File("output.csv");
+    File outputFile = new File("output_system_test.csv");
 
     @BeforeAll
     public void preTest() throws Exception {
@@ -65,17 +65,20 @@ public class SystemTest {
 
     public static Stream<Arguments> generateExpectedComparisonInFile() {
         return Stream.of(
-                Arguments.of("sample_file_1.csv", "sample_file_3.csv", 4, 2),
-                Arguments.of("sample_file_1.csv", "sample_file_1.csv", 0, 0),
-                Arguments.of("sample_file_3.csv", "sample_file_3.csv", 0, 0)
+                Arguments.of("sample_file_1.csv", "sample_file_3.csv", 4, 1, 1, 0),
+                Arguments.of("sample_file_1.csv", "sample_file_1.csv", 0, 0, 0, 0),
+                Arguments.of("sample_file_3.csv", "sample_file_3.csv", 0, 0, 0, 0),
+                Arguments.of("valid_file_4_5cols_6rows_duplicate_row.csv", "valid_file_5_5cols_6rows_duplicate_row_2.csv", 0, 0, 0, 10)
         );
     }
 
     @ParameterizedTest(name = "{index} - generateExpectedComparisonInFile file1={0}, file2={1}, expectedMismatchedCount={2}, expectedMismatchedCount={3}")
     @MethodSource
-    void generateExpectedComparisonInFile(String filepath1, String filepath2, Integer expected_mismatched_differences_count, Integer expected_missing_differences) throws Exception {
+    void generateExpectedComparisonInFile(String filepath1, String filepath2, Integer expected_mismatched_differences_count, Integer expected_in_file1_but_missing_in_file2_count, Integer expected_in_file2_but_missing_in_file1_count, Integer expected_ambiguous_duplicate_identifier_count) throws Exception {
         int mismatched_differences_count = 0;
-        int missing_differences = 0;
+        int exists_in_file2_but_missing_in_file1_count = 0;
+        int exists_in_file1_but_missing_in_file2_count = 0;
+        int ambiguous_duplicate_identifier_count = 0;
         pb = new ProcessBuilder("java",  "-jar", jar_file.getAbsolutePath(), filepath1, filepath2);
         proc = pb.start();
             if(proc.waitFor(2, TimeUnit.MINUTES)) {
@@ -90,11 +93,17 @@ public class SystemTest {
                             {
                                 int iend = line.indexOf(",");
                                 String diff_type = line.substring(0,iend);
-                                if(diff_type.equals("mismatched")){
+                                if(diff_type.equals("mismatched_value")){
                                     mismatched_differences_count++;
                                 }
-                                if(diff_type.equals("missing")){
-                                    missing_differences++;
+                                if(diff_type.equals("exists_in_file2_but_missing_in_file1")){
+                                    exists_in_file2_but_missing_in_file1_count++;
+                                }
+                                if(diff_type.equals("exists_in_file1_but_missing_in_file2")){
+                                    exists_in_file1_but_missing_in_file2_count++;
+                                }
+                                if(diff_type.equals("ambiguous_duplicate_identifier")){
+                                    ambiguous_duplicate_identifier_count++;
                                 }
 
                             }
@@ -102,7 +111,9 @@ public class SystemTest {
                         fr.close();    //closes the stream and release the resources
 
                         assertEquals(expected_mismatched_differences_count,mismatched_differences_count);
-                        assertEquals(expected_missing_differences,missing_differences);
+                        assertEquals(expected_in_file2_but_missing_in_file1_count,exists_in_file2_but_missing_in_file1_count);
+                        assertEquals(expected_in_file1_but_missing_in_file2_count,exists_in_file1_but_missing_in_file2_count);
+                        assertEquals(expected_ambiguous_duplicate_identifier_count,ambiguous_duplicate_identifier_count);
 
                     } catch (IOException e) {
                         e.printStackTrace();

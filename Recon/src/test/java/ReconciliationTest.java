@@ -109,16 +109,17 @@ public class ReconciliationTest {
     public static Stream<Arguments> compareFiles() {
         return Stream.of(
                 //valid
-                Arguments.of("sample_file_1.csv","sample_file_3.csv",true,4,1,1),
-                Arguments.of("sample_file_1.csv","sample_file_1.csv",true,0,0,0),
-                Arguments.of("sample_file_3.csv","sample_file_3.csv",true,0,0,0),
-                Arguments.of("valid_file_2_5cols_5rows.csv","valid_file_3_3cols_3rows.csv",false,0,0,0)
+                Arguments.of("sample_file_1.csv","sample_file_3.csv",true,0,4,1,1),
+                Arguments.of("sample_file_1.csv","sample_file_1.csv",true,0,0,0,0),
+                Arguments.of("sample_file_3.csv","sample_file_3.csv",true,0,0,0,0),
+                Arguments.of("valid_file_2_5cols_5rows.csv","valid_file_3_3cols_3rows.csv",false,0,0,0,0),
+                Arguments.of("valid_file_4_5cols_6rows_duplicate_row.csv","valid_file_5_5cols_6rows_duplicate_row_2.csv",true,10,0,0,0)
 
         );
     }
-    @ParameterizedTest(name = "{index} - compareFiles file1={0},file1={1}, expectedMismatches={2}, expectedMissingInFile1={3}, expectedMissingInFile1={4}, expectedValidity={5}")
+    @ParameterizedTest(name = "{index} - compareFiles file1={0},file1={1}, expectedDuplicates={2}, expectedMismatches={3}, expectedMissingInFile1={4}, expectedMissingInFile1={5}, expectedValidity={6}")
     @MethodSource
-    void compareFiles(String filepath1, String filepath2, boolean expected, Integer expected_mismatch_count, Integer expected_missing_in_file_1_count, Integer expected_missing_in_file_2_count) throws Exception {
+    void compareFiles(String filepath1, String filepath2, boolean expected, Integer expected_duplicate_count, Integer expected_mismatch_count, Integer expected_missing_in_file_1_count, Integer expected_missing_in_file_2_count) throws Exception {
         // No matching ID columns in other file
         recon.File1 = Path.of(filepath1);
         recon.File2 = Path.of(filepath2);
@@ -130,6 +131,7 @@ public class ReconciliationTest {
             assertEquals(expected_mismatch_count, recon.outputMismatchArray.size());
             assertEquals(expected_missing_in_file_1_count, recon.outputFile1MissingArray.size());
             assertEquals(expected_missing_in_file_2_count, recon.outputFile2MissingArray.size());
+            assertEquals(expected_duplicate_count, recon.outputDuplicateArray.size());
         }
         else{
             assertThrows(Exception.class,() -> recon.compareFiles() );

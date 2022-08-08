@@ -1,10 +1,10 @@
 import java.io.BufferedReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.lang.reflect.Array;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -20,6 +20,7 @@ public class Reconciliation {
     String[][] array2;
 
     List<String> outputArray;
+    List<String> outputDuplicateArray;
     List<String> outputMismatchArray;
     List<String> outputFile1MissingArray;
     List<String> outputFile2MissingArray;
@@ -108,6 +109,7 @@ public class Reconciliation {
         try{
             List<String> list1 = new ArrayList<>();
             String[][] array;
+            //checking for comma consistency
             Pattern pattern = Pattern.compile(",\\s*(?=([^\"]*\"[^\"]*\")*[^\"]*$)", Pattern.CASE_INSENSITIVE);
             Matcher matcher;
 
@@ -129,10 +131,12 @@ public class Reconciliation {
             {
 
                 array = new String[list1.size()][];
-                String[] statusColArray = new String[1];
+                String[] statusColArray = new String[2];
                 statusColArray[0]="unchecked";
                 Long matches = null;
                 for(int i=0;i<list1.size();i++){
+                    statusColArray[1]=String.valueOf(i+1);
+                    //checking for comma consistency
                     matcher = pattern.matcher(list1.get(i));
                     if (matches == null) {
                         matches = matcher.results().count();
@@ -146,7 +150,7 @@ public class Reconciliation {
                         }
                     }
 
-                    String[] dataArray = list1.get(i).split(",");
+                    String[] dataArray = list1.get(i).replaceAll("\"", "").split(",");
                     String[] combinedArray =Stream.of(statusColArray,dataArray).flatMap(Stream::of)
                             .toArray(String[]::new);
 
@@ -170,8 +174,8 @@ public class Reconciliation {
             //verify if cols in Array1 and Array2 are the same
             if(array1[0].length != array2[0].length){
                 throw new Exception("Inconsistent Number of Columns between files. Number of cols in file 1 ("+File1.toAbsolutePath()+") is "
-                        + String.valueOf(array1[0].length-1) + " while number of cols in file 2 ("+File2.toAbsolutePath()+") is "
-                        + String.valueOf(array2[0].length-1));
+                        + String.valueOf(array1[0].length-2) + " while number of cols in file 2 ("+File2.toAbsolutePath()+") is "
+                        + String.valueOf(array2[0].length-2));
 
             }
 
@@ -180,6 +184,25 @@ public class Reconciliation {
             outputFile1MissingArray = new ArrayList<>();
             outputFile2MissingArray = new ArrayList<>();
 
+            //get all duplicates
+            outputDuplicateArray = new ArrayList<>();
+
+            ArrayList array1_duplicates_list = checkAndMarkDuplicates(array1);
+            ArrayList array1_duplicates = (ArrayList) array1_duplicates_list.get(0);
+            ArrayList array1_duplicates_unique_identifiers = (ArrayList) array1_duplicates_list.get(1);
+
+            ArrayList array2_duplicates_list = checkAndMarkDuplicates(array2);
+            ArrayList array2_duplicates = (ArrayList) array2_duplicates_list.get(0);
+            ArrayList array2_duplicates_unique_identifiers = (ArrayList) array2_duplicates_list.get(1);
+
+            checkAndMarkDuplicatesAcrossArrays(array2, array1_duplicates_unique_identifiers, array2_duplicates);
+            checkAndMarkDuplicatesAcrossArrays(array1, array2_duplicates_unique_identifiers, array1_duplicates);
+
+            mergeDuplicateArrays(array1_duplicates, 1, File1);
+            mergeDuplicateArrays(array2_duplicates, 2, File2);
+//            Collections.sort(outputDuplicateArray);
+
+
             for (int i = 0; i < array1.length; i++) {
                 //assuming columns are in the same order for the 2 files
                 if(array1[i][0] == "unchecked"){
@@ -187,11 +210,11 @@ public class Reconciliation {
                     for (int j = 0; j < array2.length; j++) {
                         if(array2[j][0] == "unchecked"){
 
-                            if(array1[i][1].equals(array2[j][1]) && array1[i][2].equals(array2[j][2]) && array1[i][3].equals(array2[j][3]) && array1[i][4].equals(array2[j][4])  ){
+                            if(array1[i][2].equals(array2[j][2]) && array1[i][3].equals(array2[j][3]) && array1[i][4].equals(array2[j][4]) && array1[i][5].equals(array2[j][5])  ){
 
                                 //check if balance is same or not
                                 //assumption: string comparison is sufficient
-                                if(array1[i][5].equals(array2[j][5])){
+                                if(array1[i][6].equals(array2[j][6])){
                                     //match
                                     array1[i][0]="matched";
                                     array2[j][0]="matched";
@@ -202,8 +225,8 @@ public class Reconciliation {
                                     array1[i][0]="mismatched";
                                     array2[j][0]="mismatched";
                                     //add to new outputarray
-                                    outputMismatchArray.add("mismatched_value,file1,"+File1.toAbsolutePath().toString()+","+Integer.toString(i+1)+","+array1[i][1]+","+array1[i][2]+","+array1[i][3]+","+array1[i][4]+","+array1[i][5]);
-                                    outputMismatchArray.add("mismatched_value,file2,"+File2.toAbsolutePath().toString()+","+Integer.toString(j+1)+","+array2[j][1]+","+array2[j][2]+","+array2[j][3]+","+array2[j][4]+","+array2[j][5]);
+                                    outputMismatchArray.add("mismatched_value,file1,"+File1.toAbsolutePath().toString()+","+array1[i][1]+","+array1[i][2]+","+array1[i][3]+","+array1[i][4]+","+array1[i][5]+","+array1[i][6]);
+                                    outputMismatchArray.add("mismatched_value,file2,"+File2.toAbsolutePath().toString()+","+array2[j][1]+","+array2[j][2]+","+array2[j][3]+","+array2[j][4]+","+array2[j][5]+","+array2[j][6]);
                                 }
                                 //break out of for loop
                                 break;
@@ -215,7 +238,7 @@ public class Reconciliation {
                     if(array1[i][0] == "unchecked"){
                         array1[i][0] = "missing";
                         //add to new outputarray
-                        outputFile1MissingArray.add("exists_in_file1_but_missing_in_file2,file1,"+File1.toAbsolutePath().toString()+","+Integer.toString(i+1)+","+array1[i][1]+","+array1[i][2]+","+array1[i][3]+","+array1[i][4]+","+array1[i][5]);
+                        outputFile1MissingArray.add("exists_in_file1_but_missing_in_file2,file1,"+File1.toAbsolutePath().toString()+","+array1[i][1]+","+array1[i][2]+","+array1[i][3]+","+array1[i][4]+","+array1[i][5]+","+array1[i][6]);
                     }
                 }
             }
@@ -224,13 +247,15 @@ public class Reconciliation {
                 if (array2[j][0] == "unchecked") {
                     array2[j][0] = "missing";
                     //add to new outputarray
-                    outputFile2MissingArray.add("exists_in_file2_but_missing_in_file1,file2,"+File2.toAbsolutePath().toString()+","+Integer.toString(j+1)+","+array2[j][1]+","+array2[j][2]+","+array2[j][3]+","+array2[j][4]+","+array2[j][5]);
+                    outputFile2MissingArray.add("exists_in_file2_but_missing_in_file1,file2,"+File2.toAbsolutePath().toString()+","+array2[j][1]+","+array2[j][2]+","+array2[j][3]+","+array2[j][4]+","+array2[j][5]+","+array1[j][6]);
                 }
             }
 
+
+            System.out.println("Number of Duplicates Detected: " + String.valueOf(outputDuplicateArray.size()));
             System.out.println("Number of Mismatches Detected: " + String.valueOf(outputMismatchArray.size()));
-            System.out.println("Number of Missing Detected: " + String.valueOf(outputFile1MissingArray.size()));
-            System.out.println("Number of Missing  Detected: " + String.valueOf(outputFile2MissingArray.size()));
+            System.out.println("Number of Records in File 1 but Missing from File 2 Detected: " + String.valueOf(outputFile1MissingArray.size()));
+            System.out.println("Number of Records in File 2 but Missing from File 1 Detected: " + String.valueOf(outputFile2MissingArray.size()));
 
 
 
@@ -244,13 +269,64 @@ public class Reconciliation {
 
     }
 
+    private void mergeDuplicateArrays(ArrayList array1_duplicates, int fileCount, Path File1 ) {
+//        array1_duplicates.sort(Comparator.comparing(o -> o[1]));
+
+        for (int i = 0; i < array1_duplicates.size(); i++) {
+            String[] array1_duplicates_arr = (String[]) array1_duplicates.get(i);
+            outputDuplicateArray.add("ambiguous_duplicate_identifier,file"+String.valueOf(fileCount)+","+File1.toAbsolutePath().toString()+","+array1_duplicates_arr[1]+","+array1_duplicates_arr[2]+","+array1_duplicates_arr[3]+","+array1_duplicates_arr[4]+","+array1_duplicates_arr[5]+","+array1_duplicates_arr[6]);
+        }
+    }
+
+    private void checkAndMarkDuplicatesAcrossArrays(String array_2[][],ArrayList array1_duplicates_unique_identifiers, ArrayList array2_duplicates) {
+        for (int j = 0; j < array_2.length; j++) {
+            if (array_2[j][0] == "unchecked") {
+                for (int i = 0; i < array1_duplicates_unique_identifiers.size(); i++) {
+                    String [] array1_duplicates_unique_identifiers_arr = (String[]) array1_duplicates_unique_identifiers.get(i);
+                    if(array1_duplicates_unique_identifiers_arr[2].equals(array_2[j][2]) && array1_duplicates_unique_identifiers_arr[3].equals(array_2[j][3]) && array1_duplicates_unique_identifiers_arr[4].equals(array_2[j][4]) && array1_duplicates_unique_identifiers_arr[5].equals(array_2[j][5])  ){
+                        array_2[j][0] = "duplicate";
+                        array2_duplicates.add(array_2[j]);
+                    }
+                }
+            }
+        }
+    }
+
+    private ArrayList checkAndMarkDuplicates(String[][] array1) {
+        ArrayList myList = new ArrayList<>();
+        ArrayList array1_list_dup = new ArrayList<>();
+        ArrayList array1_list_dup_unique_identifier = new ArrayList<>();
+        for (int i = 0; i < array1.length; i++) {
+            //assuming columns are in the same order for the 2 files
+            if (array1[i][0] == "unchecked") {
+                for (int i_dup = 0; i_dup < array1.length; i_dup++) {
+                    //assuming columns are in the same order for the 2 files
+                    if (i != i_dup && array1[i_dup][0] == "unchecked") {
+                        if(array1[i][2].equals(array1[i_dup][2]) && array1[i][3].equals(array1[i_dup][3]) && array1[i][4].equals(array1[i_dup][4])  && array1[i][5].equals(array1[i_dup][5]) ){
+                            if (array1[i][0] == "unchecked") {
+                                array1[i][0] = "duplicate";
+                                array1_list_dup.add(array1[i]);
+                                array1_list_dup_unique_identifier.add(array1[i]);
+                            }
+                            array1[i_dup][0] = "duplicate";
+                            array1_list_dup.add(array1[i_dup]);
+                        }
+                    }
+                }
+            }
+        }
+        myList.add(array1_list_dup);
+        myList.add(array1_list_dup_unique_identifier);
+        return myList;
+    }
+
     public boolean generateOutputFile(String OutputFilePath) throws IOException {
         try{
             outputArray = new ArrayList<>();
             // mismatched,file1,"+File1.toAbsolutePath().toString()+",line"+Integer.toString(i+1)+","+array1[i][1]+","+array1[i][2]+","+array1[i][3]+","+array1[i][4]+","+array1[i][5]
             String colString = "";
-            for (int i=1; i<array1[0].length; i++){
-                if(i<array1[0].length-1){
+            for (int i=1; i<array1[0].length-1; i++){
+                if(i<array1[0].length-2){
                     colString+=",Column"+i;
                 }
                 else{
@@ -259,6 +335,7 @@ public class Reconciliation {
 
             }
             outputArray.add("MismatchType,File,FilePath,LineNumber"+colString);
+            outputArray.addAll(outputDuplicateArray);
             outputArray.addAll(outputMismatchArray);
             outputArray.addAll(outputFile1MissingArray);
             outputArray.addAll(outputFile2MissingArray);
