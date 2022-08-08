@@ -202,10 +202,9 @@ public class Reconciliation {
                                     array1[i][0]="mismatched";
                                     array2[j][0]="mismatched";
                                     //add to new outputarray
-                                    outputMismatchArray.add("mismatched,file1,line"+Integer.toString(i+1)+","+array1[i][1]+","+array1[i][2]+","+array1[i][3]+","+array1[i][4]+","+array1[i][5]);
-                                    outputMismatchArray.add("mismatched,file2,line"+Integer.toString(j+1)+","+array2[j][1]+","+array2[j][2]+","+array2[j][3]+","+array2[j][4]+","+array2[j][5]);
+                                    outputMismatchArray.add("mismatched_value,file1,"+File1.toAbsolutePath().toString()+","+Integer.toString(i+1)+","+array1[i][1]+","+array1[i][2]+","+array1[i][3]+","+array1[i][4]+","+array1[i][5]);
+                                    outputMismatchArray.add("mismatched_value,file2,"+File2.toAbsolutePath().toString()+","+Integer.toString(j+1)+","+array2[j][1]+","+array2[j][2]+","+array2[j][3]+","+array2[j][4]+","+array2[j][5]);
                                 }
-
                                 //break out of for loop
                                 break;
                             }
@@ -216,7 +215,7 @@ public class Reconciliation {
                     if(array1[i][0] == "unchecked"){
                         array1[i][0] = "missing";
                         //add to new outputarray
-                        outputFile1MissingArray.add("missing,file1,line"+Integer.toString(i+1)+","+array1[i][1]+","+array1[i][2]+","+array1[i][3]+","+array1[i][4]+","+array1[i][5]);
+                        outputFile1MissingArray.add("exists_in_file1_but_missing_in_file2,file1,"+File1.toAbsolutePath().toString()+","+Integer.toString(i+1)+","+array1[i][1]+","+array1[i][2]+","+array1[i][3]+","+array1[i][4]+","+array1[i][5]);
                     }
                 }
             }
@@ -225,9 +224,16 @@ public class Reconciliation {
                 if (array2[j][0] == "unchecked") {
                     array2[j][0] = "missing";
                     //add to new outputarray
-                    outputFile2MissingArray.add("missing,file2,line"+Integer.toString(j+1)+","+array2[j][1]+","+array2[j][2]+","+array2[j][3]+","+array2[j][4]+","+array2[j][5]);
+                    outputFile2MissingArray.add("exists_in_file2_but_missing_in_file1,file2,"+File2.toAbsolutePath().toString()+","+Integer.toString(j+1)+","+array2[j][1]+","+array2[j][2]+","+array2[j][3]+","+array2[j][4]+","+array2[j][5]);
                 }
             }
+
+            System.out.println("Number of Mismatches Detected: " + String.valueOf(outputMismatchArray.size()));
+            System.out.println("Number of Missing Detected: " + String.valueOf(outputFile1MissingArray.size()));
+            System.out.println("Number of Missing  Detected: " + String.valueOf(outputFile2MissingArray.size()));
+
+
+
 
             return true;
         }
@@ -241,6 +247,18 @@ public class Reconciliation {
     public boolean generateOutputFile(String OutputFilePath) throws IOException {
         try{
             outputArray = new ArrayList<>();
+            // mismatched,file1,"+File1.toAbsolutePath().toString()+",line"+Integer.toString(i+1)+","+array1[i][1]+","+array1[i][2]+","+array1[i][3]+","+array1[i][4]+","+array1[i][5]
+            String colString = "";
+            for (int i=1; i<array1[0].length; i++){
+                if(i<array1[0].length-1){
+                    colString+=",Column"+i;
+                }
+                else{
+                    colString+=",Value";
+                }
+
+            }
+            outputArray.add("MismatchType,File,FilePath,LineNumber"+colString);
             outputArray.addAll(outputMismatchArray);
             outputArray.addAll(outputFile1MissingArray);
             outputArray.addAll(outputFile2MissingArray);

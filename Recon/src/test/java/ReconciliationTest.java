@@ -84,7 +84,7 @@ public class ReconciliationTest {
                 //	Valid Parition 1: File contents are in UTF-8 encoding and contains 1 line of non-whitespace/newlines content
                 Arguments.of(new String[]{"valid_file_1_single_line.csv"}, true),
                 //	Invalid Parition 4: File contents are in UTF-8 encoding and contains more than 1 line of non-whitespace/newlines content but the number of commas (which are not wrapped within double quotes) between lines are inconsistent
-                Arguments.of(new String[]{"invalid_file_4_incosistent_commas_between_lines.csv"}, false),
+                Arguments.of(new String[]{"invalid_file_4_inconsistent_commas_between_lines.csv"}, false),
                 //	Valid Partition 2: File contents are in UTF-8 encoding and contains more than 1 line of non-whitespace/newlines content and the number of commas (which are not wrapped within double quotes) between lines are consistent for all lines
                 Arguments.of(new String[]{"sample_file_1.csv"}, true)
         );
