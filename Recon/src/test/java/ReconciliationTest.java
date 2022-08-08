@@ -9,17 +9,18 @@ import org.junit.jupiter.params.provider.ValueSource;
 import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Array;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.stream.Stream;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class ReconciliationTest {
     Reconciliation recon;
+    String OutputFilePath = "output_unit_test.csv";
 
     @BeforeEach
     public void preTest(){
@@ -29,6 +30,16 @@ public class ReconciliationTest {
     @AfterEach
     public void postTest(){
         recon = null;
+
+
+    }
+
+    private void deleteOutputTestFile() {
+        Path outputFile = Path.of(OutputFilePath);
+        File myFile = new File(outputFile.toAbsolutePath().toString());
+        if( myFile.exists()){
+            myFile.delete();
+        }
     }
 
     public static Stream<Arguments> isArgumentsValid() {
@@ -81,34 +92,47 @@ public class ReconciliationTest {
 
     @ParameterizedTest(name = "{index} - loadFiles input_args={0}, expectedValidity={1}")
     @MethodSource
-    void loadFiles(String[] args, boolean expected) {
+    void loadFiles(String[] args, boolean expected) throws Exception {
         recon.File1 = Path.of(args[0]);
         recon.File2 = Path.of(args[0]);
-        assertEquals(expected,recon.loadFiles() );
+        if (expected ==  true){
+            assertEquals(expected,recon.loadFiles() );
+        }
+        else{
+            // expect to throw exception
+            assertThrows(Exception.class,() -> recon.loadFiles() );
+        }
+
     }
 
 
     public static Stream<Arguments> compareFiles() {
         return Stream.of(
                 //valid
-                Arguments.of("sample_file_1.csv","sample_file_3.csv",4,1,1,true),
-                Arguments.of("sample_file_1.csv","sample_file_1.csv",0,0,0,true),
-                Arguments.of("sample_file_3.csv","sample_file_3.csv",0,0,0,true)
+                Arguments.of("sample_file_1.csv","sample_file_3.csv",true,4,1,1),
+                Arguments.of("sample_file_1.csv","sample_file_1.csv",true,0,0,0),
+                Arguments.of("sample_file_3.csv","sample_file_3.csv",true,0,0,0),
+                Arguments.of("valid_file_2_5cols_5rows.csv","valid_file_3_3cols_3rows.csv",false,0,0,0)
+
         );
     }
     @ParameterizedTest(name = "{index} - compareFiles file1={0},file1={1}, expectedMismatches={2}, expectedMissingInFile1={3}, expectedMissingInFile1={4}, expectedValidity={5}")
     @MethodSource
-    void compareFiles(String filepath1, String filepath2, Integer expected_mismatch_count, Integer expected_missing_in_file_1_count, Integer expected_missing_in_file_2_count, boolean expected) {
+    void compareFiles(String filepath1, String filepath2, boolean expected, Integer expected_mismatch_count, Integer expected_missing_in_file_1_count, Integer expected_missing_in_file_2_count) throws Exception {
         // No matching ID columns in other file
         recon.File1 = Path.of(filepath1);
         recon.File2 = Path.of(filepath2);
 
         assertTrue(recon.loadFiles());
-        assertEquals(expected, recon.compareFiles());
+
         if(expected == true){
+            assertTrue(recon.compareFiles());
             assertEquals(expected_mismatch_count, recon.outputMismatchArray.size());
             assertEquals(expected_missing_in_file_1_count, recon.outputFile1MissingArray.size());
             assertEquals(expected_missing_in_file_2_count, recon.outputFile2MissingArray.size());
+        }
+        else{
+            assertThrows(Exception.class,() -> recon.compareFiles() );
         }
     }
 
@@ -119,7 +143,7 @@ public class ReconciliationTest {
         assertTrue(recon.loadFiles());
         assertTrue(recon.compareFiles());
         //delete output file
-        File outputFile = new File("output.csv");
+        File outputFile = new File(OutputFilePath);
         if(outputFile.exists() && !outputFile.isDirectory()) {
             if (outputFile.delete()) {
                 System.out.println("Deleted the file: " + outputFile.getName());
@@ -129,7 +153,7 @@ public class ReconciliationTest {
             }
         }
 
-        assertTrue(recon.generateOutputFile());
+        assertTrue(recon.generateOutputFile(OutputFilePath));
         assertTrue(outputFile.exists());
     }
 }

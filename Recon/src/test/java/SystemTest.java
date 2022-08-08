@@ -24,6 +24,7 @@ public class SystemTest {
     @BeforeAll
     public void preTest() throws Exception {
         // try to get gradle build recon jar file
+        // note: build is from gradle output
         jar_file = new File("build/Recon-1.0-SNAPSHOT.jar");
         if (!jar_file.exists()) {
             // try to get previous stable built jar file
