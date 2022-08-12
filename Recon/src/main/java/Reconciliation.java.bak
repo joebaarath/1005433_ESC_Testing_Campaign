@@ -78,7 +78,8 @@ public class Reconciliation {
     private boolean checkArrayStringMatch(String[] arr1, String[] arr2,int start_index,int end_index){
 
         for(int i=start_index;i<=end_index;i++){
-
+            System.out.println(arr1+arr1[i]);
+            System.out.println(arr2+arr2[i]);
             if(!arr1[i].equals(arr2[i])){
                 return false;
             }
@@ -132,10 +133,7 @@ public class Reconciliation {
             List<String> list1 = new ArrayList<>();
             String[][] array;
             //checking for comma consistency
-
-
-            //count commas not within double quotes
-            //Pattern pattern = Pattern.compile(",\\s*(?=([^\"]*\"[^\"]*\")*[^\"]*$)", Pattern.CASE_INSENSITIVE);
+            Pattern pattern = Pattern.compile(",\\s*(?=([^\"]*\"[^\"]*\")*[^\"]*$)", Pattern.CASE_INSENSITIVE);
             Matcher matcher;
 
 
@@ -158,13 +156,10 @@ public class Reconciliation {
                 array = new String[list1.size()][];
                 String[] statusColArray = new String[2];
                 statusColArray[0]="unchecked";
-                Pattern pattern = Pattern.compile(",(?=(?:[^']*'[^']*')*[^']*$)", Pattern.CASE_INSENSITIVE);
                 Long matches = null;
-                Integer countOfCommas = null;
                 for(int i=0;i<list1.size();i++){
                     statusColArray[1]=String.valueOf(i+1);
                     //checking for comma consistency
-                    String myString = list1.get(i);
                     matcher = pattern.matcher(list1.get(i));
                     if (matches == null) {
                         matches = matcher.results().count();
@@ -177,21 +172,8 @@ public class Reconciliation {
                             throw new Exception("File "+String.valueOf(count)+" ("+file.toAbsolutePath()+") has inconsistent commas");
                         }
                     }
-//                    if (countOfCommas == null) {
-//                        //count just commas
-////                        countOfCommas = getCountOfCommas(myString);
-//                    }
-//                    else
-//                    {
-//                        long new_countOfCommas = getCountOfCommas(myString);
-//                        if(countOfCommas != new_countOfCommas){
-//                            System.out.println("File "+String.valueOf(count)+" ("+file.toAbsolutePath()+") has inconsistent commas");
-//                            throw new Exception("File "+String.valueOf(count)+" ("+file.toAbsolutePath()+") has inconsistent commas");
-//                        }
-//                    }
 
-//                    String[] dataArray = list1.get(i).replaceAll("\"", "").split(",");
-                    String[] dataArray = list1.get(i).split(",");
+                    String[] dataArray = list1.get(i).replaceAll("\"", "").split(",");
                     String[] combinedArray =Stream.of(statusColArray,dataArray).flatMap(Stream::of)
                             .toArray(String[]::new);
 
@@ -208,32 +190,6 @@ public class Reconciliation {
             throw e;
         }
 
-    }
-
-    private Integer getCountOfCommas(String myString) {
-        Integer countOfCommas;
-        countOfCommas = 0;
-        List<String> tokens = new ArrayList<String>();
-        int startPosition = 0;
-        boolean isInQuotes = false;
-        for (int currentPosition = 0; currentPosition < myString.length(); currentPosition++) {
-            if (myString.charAt(currentPosition) == '\"') {
-                isInQuotes = !isInQuotes;
-            }
-            else if (myString.charAt(currentPosition) == ',' && !isInQuotes) {
-                tokens.add(myString.substring(startPosition, currentPosition));
-                startPosition = currentPosition + 1;
-            }
-        }
-
-        String lastToken = myString.substring(startPosition);
-        if (lastToken.equals(",")) {
-            tokens.add("");
-        } else {
-            tokens.add(lastToken);
-        }
-        countOfCommas = tokens.size();
-        return countOfCommas;
     }
 
     public boolean compareFiles() throws Exception {

@@ -1,0 +1,5 @@
+MismatchType,File,FilePath,LineNumber,Column1,Column2,Value
+mismatched_value,file1,C:\Git\1005433_ESC_Testing_Campaign\Recon\file1.csv,2,mkae, likfe, simple
+mismatched_value,file2,C:\Git\1005433_ESC_Testing_Campaign\Recon\file2.csv,2,mkae, likfe, hard
+exists_in_file1_but_missing_in_file2,file1,C:\Git\1005433_ESC_Testing_Campaign\Recon\file1.csv,1,i am simple, test "1,2"
+exists_in_file2_but_missing_in_file1,file2,C:\Git\1005433_ESC_Testing_Campaign\Recon\file2.csv,1,i am simple, test, 123
