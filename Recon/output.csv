@@ -1,5 +1,21 @@
-MismatchType,File,FilePath,LineNumber,Column1,Column2,Value
-mismatched_value,file1,C:\Git\1005433_ESC_Testing_Campaign\Recon\file1.csv,2,mkae, likfe, simple
-mismatched_value,file2,C:\Git\1005433_ESC_Testing_Campaign\Recon\file2.csv,2,mkae, likfe, hard
-exists_in_file1_but_missing_in_file2,file1,C:\Git\1005433_ESC_Testing_Campaign\Recon\file1.csv,1,i am simple, test "1,2"
-exists_in_file2_but_missing_in_file1,file2,C:\Git\1005433_ESC_Testing_Campaign\Recon\file2.csv,1,i am simple, test, 123
+MismatchType,File,FilePath,LineNumber,Column1,Column2,Column3,Column4,Column5,Column6,Value
+ambiguous_duplicate_identifier,file1,C:\Git\1005433_ESC_Testing_Campaign\Recon\file0.csv,5,p-,9/0}v\V;\2,s{,~p,9U-(vEXM*,6N\.6KWAyG,>~5txleu
+ambiguous_duplicate_identifier,file1,C:\Git\1005433_ESC_Testing_Campaign\Recon\file0.csv,6,p-,9/0}v\V;\2,s{,~p,9U-(vEXM*,6N\.6KWAyG,>~5txleucpDpu2CCw~$&vuA^i8ty3/D~elK=jUsg$+_@%}hdImO!Xg@-R@`:mbm/qjwdE|o
+ambiguous_duplicate_identifier,file1,C:\Git\1005433_ESC_Testing_Campaign\Recon\file0.csv,10,p-,9/0}v\V;\2,s{,~p,9U-(vEXM*,6N\.6KWAyG,md/tnAK5WP
+ambiguous_duplicate_identifier,file1,C:\Git\1005433_ESC_Testing_Campaign\Recon\file0.csv,2,u-%n`+j9,66TC5=Q,hJV])});Yw,pm,ra,7wl.9R2U,qe]q
+ambiguous_duplicate_identifier,file1,C:\Git\1005433_ESC_Testing_Campaign\Recon\file0.csv,4,6p%O+,}wVXHBg{p,"M\""c",{.{K03,hVXe*-,{FH_,f<$
+ambiguous_duplicate_identifier,file1,C:\Git\1005433_ESC_Testing_Campaign\Recon\file0.csv,7,+$?y%w,.2TojVKF,ObFwJFM:|n,RyDF,Vp,Q3,@r=$9
+ambiguous_duplicate_identifier,file1,C:\Git\1005433_ESC_Testing_Campaign\Recon\file0.csv,8,)vHGQ1Y-,kd,dF{X4S;1j,qk,c,1+,Ud
+ambiguous_duplicate_identifier,file2,C:\Git\1005433_ESC_Testing_Campaign\Recon\file1.csv,1,+$?y%w,.2TojVKF,ObFwJFM:|n,RyDF,Vp,Q3,@r=$9
+ambiguous_duplicate_identifier,file2,C:\Git\1005433_ESC_Testing_Campaign\Recon\file1.csv,4,+$?y%w,.2TojVKF,ObFwJFM:|n,RyDF,Vp,Q3,@r=$9
+ambiguous_duplicate_identifier,file2,C:\Git\1005433_ESC_Testing_Campaign\Recon\file1.csv,2,)vHGQ1Y-,kd,dF{X4S;1j,qk,c,1+,bfQ&YTun9kTFR+(6#Dl;h@!U_-HaLv;<H]<9+1dvj;cbNJ4hWU#24zkXa+G:4.e1k$#86:v5C
+ambiguous_duplicate_identifier,file2,C:\Git\1005433_ESC_Testing_Campaign\Recon\file1.csv,5,)vHGQ1Y-,kd,dF{X4S;1j,qk,c,1+,bfQ&YTun9kTFR+(6#Dl;h@!U_-HaLv;<H]<9+1dvj;cbNJ4hWU#24zkXa+G:4.e1k$#86:v5C
+ambiguous_duplicate_identifier,file2,C:\Git\1005433_ESC_Testing_Campaign\Recon\file1.csv,3,u-%n`+j9,66TC5=Q,hJV])});Yw,pm,ra,7wl.9R2U,bgBQH2rV8P?Y4JcdoP-^XmN2]{?IH/@BGkyK#u>Im1JAD!+r#H=l({6+vf=\m!1b@J&cERvr$b72PPx%yI?WV/SK6j)q
+ambiguous_duplicate_identifier,file2,C:\Git\1005433_ESC_Testing_Campaign\Recon\file1.csv,8,u-%n`+j9,66TC5=Q,hJV])});Yw,pm,ra,7wl.9R2U,bgBQH2rV8P?Y4JcdoP-^XmN2]{?IH/@BGkyK#u>Im1JAD!+r#H=l({6+vf=\m!1b@J&cERvr$b72PPx%yI?WV/SK6j)q
+ambiguous_duplicate_identifier,file2,C:\Git\1005433_ESC_Testing_Campaign\Recon\file1.csv,6,6p%O+,}wVXHBg{p,"M\""c",{.{K03,hVXe*-,{FH_,f<$
+ambiguous_duplicate_identifier,file2,C:\Git\1005433_ESC_Testing_Campaign\Recon\file1.csv,10,6p%O+,}wVXHBg{p,"M\""c",{.{K03,hVXe*-,{FH_,f<$
+ambiguous_duplicate_identifier,file2,C:\Git\1005433_ESC_Testing_Campaign\Recon\file1.csv,7,p-,9/0}v\V;\2,s{,~p,9U-(vEXM*,6N\.6KWAyG,>~5txleu'cpDpu2CCw~$&vuA^i8ty3/D~elK=jUsg$+_@%}hdImO!Xg@-R@`:mbm/qjwdE|o
+ambiguous_duplicate_identifier,file2,C:\Git\1005433_ESC_Testing_Campaign\Recon\file1.csv,9,p-,9/0}v\V;\2,s{,~p,9U-(vEXM*,6N\.6KWAyG,>~5txleu'cpDpu2CCw~$&vuA^i8ty3/D~elK=jUsg$+_@%}hdImO!Xg@-R@`:mbm/qjwdE|o
+exists_in_file1_but_missing_in_file2,file1,C:\Git\1005433_ESC_Testing_Campaign\Recon\file0.csv,1,A`|z4ZF,61G1,$/,VX,(<qX$~3!v,h<Dn,<@A~1KvO_h
+exists_in_file1_but_missing_in_file2,file1,C:\Git\1005433_ESC_Testing_Campaign\Recon\file0.csv,3,a%WvsvgX,V?D,kV1vV-2,#20`8XJ,eg,"x""v",bwYCl81@:!
+exists_in_file1_but_missing_in_file2,file1,C:\Git\1005433_ESC_Testing_Campaign\Recon\file0.csv,9,@qHaUxu?,UVB,v<_i#xThD2,_du,*-yV:`6Z#v,uQGZ\JhXY_,@

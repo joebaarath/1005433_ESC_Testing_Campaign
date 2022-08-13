@@ -158,7 +158,7 @@ public class Reconciliation {
                 array = new String[list1.size()][];
                 String[] statusColArray = new String[2];
                 statusColArray[0]="unchecked";
-                Pattern pattern = Pattern.compile(",(?=(?:[^']*'[^']*')*[^']*$)", Pattern.CASE_INSENSITIVE);
+                Pattern pattern = Pattern.compile(",", Pattern.CASE_INSENSITIVE);
                 Long matches = null;
                 Integer countOfCommas = null;
                 for(int i=0;i<list1.size();i++){
@@ -173,8 +173,8 @@ public class Reconciliation {
                     {
                         long new_matches = matcher.results().count();
                         if(matches != new_matches){
-                            System.out.println("File "+String.valueOf(count)+" ("+file.toAbsolutePath()+") has inconsistent commas");
-                            throw new Exception("File "+String.valueOf(count)+" ("+file.toAbsolutePath()+") has inconsistent commas");
+                            System.out.println("File "+String.valueOf(count)+" ("+file.toAbsolutePath()+") has inconsistent commas in line " + String.valueOf(i) + " (" + String.valueOf(matches) + " commas) against line " + String.valueOf(i+1) + " (" + String.valueOf(new_matches) + " commas)");
+                            throw new Exception("File "+String.valueOf(count)+" ("+file.toAbsolutePath()+") has inconsistent commas in line " + String.valueOf(i) + " (" + String.valueOf(matches) + " commas) against line " + String.valueOf(i+1) + " (" + String.valueOf(new_matches) + " commas)");
                         }
                     }
 //                    if (countOfCommas == null) {
@@ -340,14 +340,14 @@ public class Reconciliation {
         }
     }
 
-    private void checkAndMarkDuplicatesAcrossArrays(String array_2[][],ArrayList array1_duplicates_unique_identifiers, ArrayList array2_duplicates) {
+    private void checkAndMarkDuplicatesAcrossArrays(String array_2[][],ArrayList array_1_duplicates_unique_identifiers, ArrayList array_2_duplicates) {
         for (int j = 0; j < array_2.length; j++) {
             if (array_2[j][0] == "unchecked") {
-                for (int i = 0; i < array1_duplicates_unique_identifiers.size(); i++) {
-                    String [] array1_duplicates_unique_identifiers_arr = (String[]) array1_duplicates_unique_identifiers.get(i);
-                    if(checkArrayStringMatch(array1_duplicates_unique_identifiers_arr,array2[j],2,array2[0].length-2)){
+                for (int i = 0; i < array_1_duplicates_unique_identifiers.size(); i++) {
+                    String [] array1_duplicates_unique_identifiers_arr = (String[]) array_1_duplicates_unique_identifiers.get(i);
+                    if(checkArrayStringMatch(array1_duplicates_unique_identifiers_arr,array_2[j],2,array_2[0].length-2)){
                         array_2[j][0] = "duplicate";
-                        array2_duplicates.add(array_2[j]);
+                        array_2_duplicates.add(array_2[j]);
                     }
                 }
             }
