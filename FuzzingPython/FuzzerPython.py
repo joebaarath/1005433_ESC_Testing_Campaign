@@ -166,7 +166,7 @@ def generateInvalidFuzzedFile(filename, fileContent, error_type_int):
     if os.path.exists(filepath):
         os.remove(filepath)
 
-    line_index = randint(1, len(fileContent)-1)
+    line_index = randint(0, len(fileContent)-1)
     row_data = fileContent[line_index]
     match error_type_int:
         case 1: 
@@ -276,12 +276,32 @@ def runFuzzer():
                 print(f"count_duplicates {count_duplicates} while expected is {count_expected_duplicates}")
                 print(f"count_mismatches {count_mismatches} while expected is {count_expected_mismatches}")
                 print(f"count_missing {count_missing} while expected is {count_expected_missing}")
+                print()
+                print(f"Failed File Output (" + dir_path + "\\" + outputCsvFile + ") CSV content:")
+                with open(dir_path + "\\" + outputCsvFile) as csv_file:
+                    csv_reader = csv.reader(csv_file, delimiter=',')
+                    for row in csv_reader:
+                        print(",".join(row))
+                print()
 
         if(not validity_of_output_csv):
             print(f"proc_exit_code_valid {proc_exit_code_valid} while expected is 0")
             print(f"isOutputCsvGenerated {isOutputCsvGenerated()} while expected is True")
             count_failure+=1
             count_failure_case0_valid +=1
+            print()
+            print(f"Failed File1 ({file0}) CSV content:")
+            with open(file0) as csv_file:
+                csv_reader = csv.reader(csv_file, delimiter=',')
+                for row in csv_reader:
+                    print(",".join(row))
+            print()
+            print(f"Failed File2 ({file1}) CSV content:")
+            with open(file1) as csv_file:
+                csv_reader = csv.reader(csv_file, delimiter=',')
+                for row in csv_reader:
+                    print(",".join(row))
+            print()
         
         printTestStatements()
         delete_all_csv_in_directory()
@@ -296,6 +316,19 @@ def runFuzzer():
         else:
             count_failure+=1
             count_failure_case1_valid_w_invalid_extra_comma+=1
+            print()
+            print(f"Failed File1 ({file0}) CSV content:")
+            with open(file0) as csv_file:
+                csv_reader = csv.reader(csv_file, delimiter=',')
+                for row in csv_reader:
+                    print(",".join(row))
+            print()
+            print(f"Failed File2 ({file2}) CSV content:")
+            with open(file2) as csv_file:
+                csv_reader = csv.reader(csv_file, delimiter=',')
+                for row in csv_reader:
+                    print(",".join(row))
+            print()
         
         printTestStatements()
         delete_all_csv_in_directory()
@@ -309,6 +342,19 @@ def runFuzzer():
         else:
             count_failure+=1
             count_failure_case2_valid_w_invalid_single_line_reduced+=1
+            print()
+            print(f"Failed File1 ({file0}) CSV content:")
+            with open(file0) as csv_file:
+                csv_reader = csv.reader(csv_file, delimiter=',')
+                for row in csv_reader:
+                    print(",".join(row))
+            print()
+            print(f"Failed File2 ({file3}) CSV content:")
+            with open(file3) as csv_file:
+                csv_reader = csv.reader(csv_file, delimiter=',')
+                for row in csv_reader:
+                    print(",".join(row))
+            print()
         
         printTestStatements()
         delete_all_csv_in_directory()
