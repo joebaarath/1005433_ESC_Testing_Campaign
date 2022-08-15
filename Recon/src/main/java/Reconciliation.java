@@ -18,7 +18,8 @@ public class Reconciliation {
 
     String[][] array1;
     String[][] array2;
-
+    Boolean hasHeaders = true;
+    Boolean addHelperColumnsAtTheEnd = true;
     List<String> outputArray;
     List<String> outputDuplicateArray;
     List<String> outputMismatchArray;
@@ -382,27 +383,64 @@ public class Reconciliation {
         return myList;
     }
 
-    public boolean generateOutputFile(String OutputFilePath) throws IOException {
+    public boolean generateOutputFile(String OutputFilePath) throws IOException  {
         try{
             outputArray = new ArrayList<>();
+            List<String>  formattedOutputArray = new ArrayList<>();
             String colString = "";
-            for (int i=1; i<array1[0].length-1; i++){
-                if(i<array1[0].length-2){
-                    colString+=",Column"+i;
+            if(hasHeaders == false){
+                for (int i=1; i<array1[0].length-1; i++){
+                    if(i<array1[0].length-2){
+                        colString+=",Column"+i;
+                    }
+                    else{
+                        colString+=",Value";
+                    }
                 }
-                else{
-                    colString+=",Value";
+            }
+            else{
+                for (int i=2; i<array1[0].length; i++){
+                    colString+="," + array1[0][i];
                 }
+//                colString=colString.substring(1);
 
             }
+
             outputArray.add("MismatchType,File,FilePath,LineNumber"+colString);
             outputArray.addAll(outputDuplicateArray);
             outputArray.addAll(outputMismatchArray);
             outputArray.addAll(outputFile1MissingArray);
             outputArray.addAll(outputFile2MissingArray);
 
+
+            if (addHelperColumnsAtTheEnd == true){
+                //Rearrange
+                Matcher matcher;
+                Pattern pattern = Pattern.compile("(^(?:[^,]*,){4})", Pattern.CASE_INSENSITIVE);
+
+                for (int l = 0; l < outputArray.size(); l++) {
+                    //use regex to get the first character all the way to the fourth comma
+                    // remove last character, add comma in the front of the string
+                    //merge string
+                    String myFullString =  outputArray.get(l);
+                    String subStr = "";
+                    matcher = pattern.matcher(myFullString);
+                    while (matcher.find()) {
+                        subStr = matcher.group(1);
+                    }
+                    myFullString =myFullString.substring(subStr.length());
+                    myFullString+= "," + subStr.substring(0, subStr.length() - 1);
+                    formattedOutputArray.add(myFullString);
+                }
+            }
+            else
+            {
+                formattedOutputArray = outputArray;
+            }
+
+
             FileWriter writer = new FileWriter(OutputFilePath);
-            for(String line: outputArray) {
+            for(String line: formattedOutputArray) {
                 writer.write(line + System.lineSeparator());
             }
             writer.close();
