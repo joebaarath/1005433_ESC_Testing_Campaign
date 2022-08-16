@@ -21,7 +21,7 @@ git clone https://github.com/joebaarath/1005433_ESC_Testing_Campaign
 ```
 
 ### Usage 1: Running reconcillation via Command Line using jar artefact with default params
-1. Open cmd line and navigate to 1005433_ESC_Testing_Campaign\Recon folder and run the following command:
+1. Open cmd line and navigate to "1005433_ESC_Testing_Campaign\Recon folder" and run the following command:
 ```
 java -jar Recon.jar "sample_file_1.csv" "sample_file_3.csv"
 ```
@@ -37,7 +37,7 @@ Indicates mismatch in the value column of 1 to 1 match between the csv file for 
 <b>Difference 2</b>: Missing row - Indicates that the Identifier columns (non-value columns) exists in only 1 CSV file but not the other.  <br><br>
 <b>Difference 3</b>: Ambigious Duplicate Identifier - Indicates there are more than a 1 to 1 match of the same Identifier columns (non-value columns) across the 2 files. <br>
 
-### Development Purposes: To setup the reconcillation program for development using IntelliJ
+### Development Setup: To setup the reconcillation program for development using IntelliJ
 1. Install IntelliJ 
 2. Open IntelliJ
 3. Open Project
@@ -49,3 +49,17 @@ Indicates mismatch in the value column of 1 to 1 match between the csv file for 
 9. Modify the 2 cmd line arguements to other csv file paths and click okay
 10. Under the "Run" file menu, click on the run to perform reconciliation on specified csv files
 
+### Running the Unit Test or Software Test
+1. Ensure development setup is completed using IntelliJ
+2. Within IntelliJ, navigate to "Recon/src/test/java"
+3. Open and run "ReconcilliationTest" for Unit Testing or "SystemTest"
+4. The resulting output would be the Junit Unit Testing output to indicate any failures.
+
+### Running the Fuzzing Test
+1. Ensure Python 3.10 is installed
+2. Open VS Code and Open the folder "1005433_ESC_Testing_Campaign\FuzzingPython"
+3. Place the latest Recon.jar file in "1005433_ESC_Testing_Campaign\FuzzingPython"
+4. In VS Code, open and run "FuzzerPython.py"
+The fuzzer would simulate different cases, generate input CSV files with random values with either valid or invalid csv file formats to test robustness<br/>
+The fuzzer would output "FuzzerLog.log" which would include the number of cases which was successful or failed.<br>
+The "FuzzerLog.log" would also include all the failed CSV file inputs with comphrensive details to aid the user's investigation
