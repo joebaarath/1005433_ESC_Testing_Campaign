@@ -1,7 +1,0 @@
-"Customer ID#","Account No.","Currency","Type","Balance",MismatchType,File,FilePath,LineNumber
-"ID99","BOS8059799","SGD","CURRENT","208045",mismatched_value,file1,C:\Git\1005433_ESC_Testing_Campaign\Recon\sample_file_1.csv,100
-"ID99","BOS8059799","SGD","CURRENT","208043",mismatched_value,file2,C:\Git\1005433_ESC_Testing_Campaign\Recon\sample_file_3.csv,100
-"ID198","BOS30360198","USD","CURRENT","679878",mismatched_value,file1,C:\Git\1005433_ESC_Testing_Campaign\Recon\sample_file_1.csv,199
-"ID198","BOS30360198","USD","CURRENT","6798788",mismatched_value,file2,C:\Git\1005433_ESC_Testing_Campaign\Recon\sample_file_3.csv,199
-"ID298","BOS50591298","CHF","SAVINGS","988459",exists_in_file1_but_missing_in_file2,file1,C:\Git\1005433_ESC_Testing_Campaign\Recon\sample_file_1.csv,299
-"ID298","BOS50591298","USD","SAVINGS","988459",exists_in_file2_but_missing_in_file1,file2,C:\Git\1005433_ESC_Testing_Campaign\Recon\sample_file_3.csv,299
