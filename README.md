@@ -52,7 +52,7 @@ Indicates mismatch in the value column of 1 to 1 match between the csv file for 
 ### Running the Unit Test or Software Test
 1. Ensure development setup is completed using IntelliJ
 2. Within IntelliJ, navigate to "Recon/src/test/java"
-3. Open and run "ReconcilliationTest" for Unit Testing or "SystemTest"
+3. Open and run "ReconcilliationTest" for Unit Testing or "SystemTest" for System Testing
 4. The resulting output would be the Junit Unit Testing output to indicate any failures.
 
 ### Running the Fuzzing Test
