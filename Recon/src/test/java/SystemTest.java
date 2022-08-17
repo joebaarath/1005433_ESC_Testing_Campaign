@@ -2,6 +2,7 @@ import org.junit.jupiter.api.*;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
+import org.junit.platform.commons.util.StringUtils;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -9,6 +10,7 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.Locale;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Stream;
 
@@ -92,18 +94,26 @@ public class SystemTest {
                         while ((line = br.readLine()) != null) {
                             if(line.contains(","))
                             {
-                                int iend = line.indexOf(",");
-                                String diff_type = line.substring(0,iend);
-                                if(diff_type.equals("mismatched_value")){
+                                //num of commas in each line
+                                int number_of_commas = 0;
+                                for (int i = 0; i < line.length(); i++) {
+                                    if (line.charAt(i) == ',') {
+                                        number_of_commas++;
+                                    }
+                                }
+                                // get the 4th last comma to 3rd last comma
+                                String [] line_arr = line.split(",");
+                                String diff_type = line_arr[number_of_commas-3].toLowerCase();
+                                if(diff_type.contains("mismatched")){
                                     mismatched_differences_count++;
                                 }
-                                if(diff_type.equals("exists_in_file2_but_missing_in_file1")){
+                                if(diff_type.contains("missing in file1")){
                                     exists_in_file2_but_missing_in_file1_count++;
                                 }
-                                if(diff_type.equals("exists_in_file1_but_missing_in_file2")){
+                                if(diff_type.contains("missing in file2")){
                                     exists_in_file1_but_missing_in_file2_count++;
                                 }
-                                if(diff_type.equals("ambiguous_duplicate_identifier")){
+                                if(diff_type.contains("duplicate")){
                                     ambiguous_duplicate_identifier_count++;
                                 }
 
