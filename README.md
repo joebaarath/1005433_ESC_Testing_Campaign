@@ -47,11 +47,11 @@ i.e. if you want to use the first column in input CSVs for comparasion, Param3=0
 i.e. if you want to use the second column, third column and second last column in input CSVs for comparasion, Param3=2,3,-2 <br>
 Note: Columns used for comparasions won't be used to uniquely identify the row during comparasion across files <br>
 <b>Param4</b>: expect csv input files to contain headers or not.  <br>
-i.e. If csv file contains header, Param4=inputheader<br>
-i.e. If csv file contains no header, Param4=inputnoheader<br>
+i.e. If input csv file contains header, Param4=inputheader<br>
+i.e. If input csv file contains no header, Param4=inputnoheader<br>
 <b>Param5</b>: expect csv output files to contain headers or not.  <br>
-i.e. If csv file contains header, Param5=outputheader<br>
-i.e. If csv file contains no header, Param5=outputnoheader<br>
+i.e. If output csv file should include header, Param5=outputheader<br>
+i.e. If output csv file should exclude header, Param5=outputnoheader<br>
 
 1. Open cmd line and navigate to "1005433_ESC_Testing_Campaign\Recon folder" and run the following command:<br>
 Format: java -jar Recon.jar <b>Param1 Param2 Param3 Param4 Param5</b>
