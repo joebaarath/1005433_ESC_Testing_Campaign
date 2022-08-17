@@ -20,11 +20,45 @@ Ensure you are using Java version 17 or higher and Oracle openJdk 18 or higher.
 git clone https://github.com/joebaarath/1005433_ESC_Testing_Campaign
 ```
 
-### Usage 1: Running reconcillation via Command Line using jar artefact with default params
+### Usage 1: [Scenario 1] - Running reconcillation via Command Line using jar artefact with Scenario 1 params
+1. Open cmd line and navigate to "1005433_ESC_Testing_Campaign\Recon folder" and run the following command:
+```
+java -jar Recon.jar "sample_file_1.csv" "sample_file_3.csv" -1 inputheader outputheader
+```
+### Usage 2: [Scenario 2] - Running reconcillation via Command Line using jar artefact with Scenario 2 params
+1. Open cmd line and navigate to "1005433_ESC_Testing_Campaign\Recon folder" and run the following command:
+```
+java -jar Recon.jar "sample_file_1.csv" "sample_file_3.csv" 2,-1 inputheader outputheader
+```
+
+### Usage 3: Default 2 param
+Defaults: last column value to be checked for mismatch, inputheader = true, outputheader = true<br>
 1. Open cmd line and navigate to "1005433_ESC_Testing_Campaign\Recon folder" and run the following command:
 ```
 java -jar Recon.jar "sample_file_1.csv" "sample_file_3.csv"
 ```
+
+### Usage 4: Custom 5 params
+<b>Param1</b>: Path to input CSV file 1. Wrap with double quotes if space exists within file path.<br>
+<b>Param2</b>: Path to input CSV file 2. Wrap with double quotes if space exists within file path.<br>
+<b>Param3</b>: List of column indexes to be used for CSV mismatch value comparasion, delimited by comma. Can use negative values to get reverse index. <br>
+i.e. if you want to use the last column in input CSVs for comparasion, Param3=-1 <br>
+i.e. if you want to use the first column in input CSVs for comparasion, Param3=0 <br>
+i.e. if you want to use the second column, third column and second last column in input CSVs for comparasion, Param3=2,3,-2 <br>
+Note: Columns used for comparasions won't be used to uniquely identify the row during comparasion across files <br>
+<b>Param4</b>: expect csv input files to contain headers or not.  <br>
+i.e. If csv file contains header, Param4=inputheader<br>
+i.e. If csv file contains no header, Param4=inputnoheader<br>
+<b>Param5</b>: expect csv output files to contain headers or not.  <br>
+i.e. If csv file contains header, Param5=outputheader<br>
+i.e. If csv file contains no header, Param5=outputnoheader<br>
+
+1. Open cmd line and navigate to "1005433_ESC_Testing_Campaign\Recon folder" and run the following command:<br>
+Format: java -jar Recon.jar <b>Param1 Param2 Param3 Param4 Param5</b>
+```
+java -jar Recon.jar "sample_file_1.csv" "sample_file_3.csv" 2,3,-2 inputnoheader outputnoheader
+```
+
 <b>Understanding the output:</b><br>
 The Command line would print out helpful success/error messages.<br>
 A output.csv would be generated in the recon folder. <br>
