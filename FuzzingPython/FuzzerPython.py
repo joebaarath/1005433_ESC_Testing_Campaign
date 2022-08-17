@@ -12,7 +12,7 @@ from datetime import datetime
 duplicate_key_word="duplicate"
 mismatch_key_word="mismatch"
 missing_key_word="missing"
-csv_key_word_col_check=1
+csv_key_word_col_check=0
 csv_has_header=True
 errorLogFileName="FuzzerLog.log"
 
@@ -235,7 +235,7 @@ def runFuzzer():
         file2, file2Content = generateInvalidFuzzedFile("file2", file0Content, 1)
         file3, file3Content = generateInvalidFuzzedFile("file3", file0Content, 2)
 
-        proc_exit_code_valid = subprocess.call(['java', '-jar', 'Recon.jar', file0 , file1])
+        proc_exit_code_valid = subprocess.call(['java', '-jar', 'Recon.jar', file0 , file1, '-1', 'inputnoheader', 'outputheader'])
         count_executed+=1
         # ensure exit != 0 and no csv generated
         validity_of_output_csv=False
@@ -275,6 +275,7 @@ def runFuzzer():
                             temp_csv_str = str(row[index_val]).lower()
                             temp_csv_str = temp_csv_str.strip()
                         elif csv_key_word_col_check == None:
+                            #todo: use last last col value 
                             index_val = csv_key_word_col_check
                             temp_csv_str = str(row[index_val]).lower()
                             temp_csv_str = temp_csv_str.strip()
@@ -303,7 +304,7 @@ def runFuzzer():
                 logging.error(f"count_missing {count_missing} while expected is {count_expected_missing}")
                 print()
                 print(f"Failed File Output (" + dir_path + "\\" + outputCsvFile + ") CSV content:")
-                logging.error(f"Failed File Output (" + dir_path + "\\" + outputCsvFile + ") CSV content:")
+                logging.error(f"##### Failed File Output (" + dir_path + "\\" + outputCsvFile + ") CSV content:")
                 
                 with open(dir_path + "\\" + outputCsvFile) as csv_file:
                     csv_reader = csv.reader(csv_file, delimiter=',')
@@ -323,7 +324,8 @@ def runFuzzer():
             count_failure_case0_valid +=1
             
             print()
-            print(f"Failed File1 ({file0}) CSV content:")
+            print(f" Failed File1 ({file0}) CSV content:")
+            logging.error(f"##### Failed File1 ({file0}) CSV content:")
             with open(file0) as csv_file:
                 csv_reader = csv.reader(csv_file, delimiter=',')
                 for row in csv_reader:
@@ -331,7 +333,8 @@ def runFuzzer():
                     print(row_str)
                     logging.error(row_str)
             print()
-            print(f"Failed File2 ({file1}) CSV content:")
+            print(f"##### Failed File2 ({file1}) CSV content:")
+            logging.error(f"##### Failed File2 ({file1}) CSV content:")
             with open(file1) as csv_file:
                 csv_reader = csv.reader(csv_file, delimiter=',')
                 for row in csv_reader:
@@ -343,7 +346,7 @@ def runFuzzer():
         printTestStatements()
         delete_all_csv_in_directory()
 
-        proc_exit_code_valid = subprocess.call(['java', '-jar', 'Recon.jar', file1 , file0])
+        proc_exit_code_valid = subprocess.call(['java', '-jar', 'Recon.jar', file1 , file0, '-1', 'inputnoheader', 'outputheader'])
         count_executed+=1
         # ensure exit != 0 and no csv generated
         validity_of_output_csv=False
@@ -403,7 +406,7 @@ def runFuzzer():
                 logging.error(f"count_missing {count_missing} while expected is {count_expected_missing}")
                 print()
                 print(f"Failed File Output (" + dir_path + "\\" + outputCsvFile + ") CSV content:")
-                logging.error(f"Failed File Output (" + dir_path + "\\" + outputCsvFile + ") CSV content:")
+                logging.error(f"##### Failed File Output (" + dir_path + "\\" + outputCsvFile + ") CSV content:")
                 with open(dir_path + "\\" + outputCsvFile) as csv_file:
                     csv_reader = csv.reader(csv_file, delimiter=',')
                     for row in csv_reader:
@@ -423,7 +426,7 @@ def runFuzzer():
             
             print()
             print(f"Failed File1 ({file0}) CSV content:")
-            logging.error(f"Failed File1 ({file0}) CSV content:")
+            logging.error(f"##### Failed File1 ({file0}) CSV content:")
             with open(file0) as csv_file:
                 csv_reader = csv.reader(csv_file, delimiter=',')
                 for row in csv_reader:
@@ -432,7 +435,7 @@ def runFuzzer():
                     logging.error(row_str)
             print()
             print(f"Failed File2 ({file1}) CSV content:")
-            logging.error(f"Failed File2 ({file1}) CSV content:")
+            logging.error(f"##### Failed File2 ({file1}) CSV content:")
             with open(file1) as csv_file:
                 csv_reader = csv.reader(csv_file, delimiter=',')
                 for row in csv_reader:
@@ -445,7 +448,7 @@ def runFuzzer():
         delete_all_csv_in_directory()
 
         # pass file1 and file2 to Recon.Jar
-        proc_exit_code_extra_comma = subprocess.call(['java', '-jar', 'Recon.jar', file0 , file2])
+        proc_exit_code_extra_comma = subprocess.call(['java', '-jar', 'Recon.jar', file0 , file2, '-1', 'inputnoheader', 'outputheader'])
         count_executed+=1
         # ensure exit != 0 and no csv generated
         if proc_exit_code_extra_comma != 0 and isOutputCsvGenerated() == False:
@@ -458,7 +461,7 @@ def runFuzzer():
             print()
             logging.error(f"")
             print(f"Failed File1 ({file0}) CSV content:")
-            logging.error(f"Failed File1 ({file0}) CSV content:")
+            logging.error(f"##### Failed File1 ({file0}) CSV content:")
             with open(file0) as csv_file:
                 csv_reader = csv.reader(csv_file, delimiter=',')
                 for row in csv_reader:
@@ -468,7 +471,7 @@ def runFuzzer():
             print()
             logging.error(f"")
             print(f"Failed File2 ({file2}) CSV content:")
-            logging.error(f"Failed File2 ({file2}) CSV content:")
+            logging.error(f"##### Failed File2 ({file2}) CSV content:")
             with open(file2) as csv_file:
                 csv_reader = csv.reader(csv_file, delimiter=',')
                 for row in csv_reader:
@@ -482,7 +485,7 @@ def runFuzzer():
         delete_all_csv_in_directory()
 
         # pass file1 and file2 to Recon.Jar
-        proc_exit_code_extra_comma = subprocess.call(['java', '-jar', 'Recon.jar', file2 , file0])
+        proc_exit_code_extra_comma = subprocess.call(['java', '-jar', 'Recon.jar', file2 , file0, '-1', 'inputnoheader', 'outputheader'])
         count_executed+=1
         # ensure exit != 0 and no csv generated
         if proc_exit_code_extra_comma != 0 and isOutputCsvGenerated() == False:
@@ -495,7 +498,7 @@ def runFuzzer():
             print()
             logging.error(f"")
             print(f"Failed File1 ({file0}) CSV content:")
-            logging.error(f"Failed File1 ({file0}) CSV content:")
+            logging.error(f"##### Failed File1 ({file0}) CSV content:")
             with open(file0) as csv_file:
                 csv_reader = csv.reader(csv_file, delimiter=',')
                 for row in csv_reader:
@@ -505,7 +508,7 @@ def runFuzzer():
             print()
             logging.error(f"")
             print(f"Failed File2 ({file2}) CSV content:")
-            logging.error(f"Failed File2 ({file2}) CSV content:")
+            logging.error(f"##### Failed File2 ({file2}) CSV content:")
             with open(file2) as csv_file:
                 csv_reader = csv.reader(csv_file, delimiter=',')
                 for row in csv_reader:
@@ -518,7 +521,7 @@ def runFuzzer():
         printTestStatements()
         delete_all_csv_in_directory()
 
-        proc_exit_code_line_reduced = subprocess.call(['java', '-jar', 'Recon.jar', file0 , file3])
+        proc_exit_code_line_reduced = subprocess.call(['java', '-jar', 'Recon.jar', file0 , file3, '-1', 'inputnoheader', 'outputheader'])
         count_executed+=1
         # ensure exit != 0 and no csv generated
         if (file0Content == file3Content) or (proc_exit_code_line_reduced != 0 and isOutputCsvGenerated() == False):
@@ -530,7 +533,7 @@ def runFuzzer():
             count_failure_case2_valid_w_invalid_single_line_reduced+=1
             print()
             print(f"Failed File1 ({file0}) CSV content:")
-            logging.error(f"Failed File1 ({file0}) CSV content:")
+            logging.error(f"##### Failed File1 ({file0}) CSV content:")
             with open(file0) as csv_file:
                 csv_reader = csv.reader(csv_file, delimiter=',')
                 for row in csv_reader:
@@ -539,7 +542,7 @@ def runFuzzer():
                     logging.error(row_str)
             print()
             print(f"Failed File2 ({file3}) CSV content:")
-            logging.error(f"Failed File2 ({file3}) CSV content:")
+            logging.error(f"##### Failed File2 ({file3}) CSV content:")
             with open(file3) as csv_file:
                 csv_reader = csv.reader(csv_file, delimiter=',')
                 for row in csv_reader:
@@ -551,7 +554,7 @@ def runFuzzer():
         printTestStatements()
         delete_all_csv_in_directory()
 
-        proc_exit_code_line_reduced = subprocess.call(['java', '-jar', 'Recon.jar', file3 , file0])
+        proc_exit_code_line_reduced = subprocess.call(['java', '-jar', 'Recon.jar', file3 , file0, '-1', 'inputnoheader', 'outputheader'])
         count_executed+=1
         # ensure exit != 0 and no csv generated
         if (file0Content == file3Content) or (proc_exit_code_line_reduced != 0 and isOutputCsvGenerated() == False):
@@ -563,7 +566,7 @@ def runFuzzer():
             count_failure_case2_valid_w_invalid_single_line_reduced+=1
             print()
             print(f"Failed File1 ({file0}) CSV content:")
-            logging.error(f"Failed File1 ({file0}) CSV content:")
+            logging.error(f"##### Failed File1 ({file0}) CSV content:")
             with open(file0) as csv_file:
                 csv_reader = csv.reader(csv_file, delimiter=',')
                 for row in csv_reader:
@@ -572,7 +575,7 @@ def runFuzzer():
                     logging.error(row_str)
             print()
             print(f"Failed File2 ({file3}) CSV content:")
-            logging.error(f"Failed File2 ({file3}) CSV content:")
+            logging.error(f"##### Failed File2 ({file3}) CSV content:")
             with open(file3) as csv_file:
                 csv_reader = csv.reader(csv_file, delimiter=',')
                 for row in csv_reader:
