@@ -44,8 +44,6 @@ public class Reconciliation {
 //                return false;
             }
 
-            tempStr_valueColsIndexes.add("-1");
-
             if(((args.length >= 3) && (args.length < 5)) || args.length > 5)  {
                 throw new Exception("Reconciliation System received " + args.length + " arguments when 2 or 5 arguments expected ! Please refer to github page for syntax.");
             }
@@ -122,6 +120,9 @@ public class Reconciliation {
     private void setValueColumnsIndexes(int size_of_data_cols) throws Exception {
         //check if all are valid int
         valueColsIndexes = new ArrayList<>();
+        if(tempStr_valueColsIndexes.size() == 0){
+            tempStr_valueColsIndexes.add("-1");
+        }
         for (int counter = 0; counter < tempStr_valueColsIndexes.size(); counter++) {
             try{
                 Integer myIndexInt = Integer.parseInt( (String) tempStr_valueColsIndexes.get(counter));
@@ -370,6 +371,7 @@ public class Reconciliation {
                         + String.valueOf(array2[0].length-2));
 
             }
+
 
             setValueColumnsIndexes(array1[0].length-2);
 
