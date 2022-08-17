@@ -19,24 +19,56 @@ public class Reconciliation {
     String[][] array1;
     String[][] array2;
     Boolean hasHeaders = true;
+    Boolean hasOutputHeaders = true;
     Boolean addHelperColumnsAtTheEnd = true;
     List<String> outputArray;
     List<String> outputDuplicateArray;
     List<String> outputMismatchArray;
     List<String> outputFile1MissingArray;
     List<String> outputFile2MissingArray;
+    ArrayList valueColsIndexes;
+    ArrayList tempStr_valueColsIndexes= new ArrayList<>();
 
-    public boolean isArgumentsValid(String[] args) {
+
+    public boolean isArgumentsValid(String[] args) throws Exception {
         try{
             if (args == null){
                 System.out.println("Reconciliation System expected 2 file path arguments but received none!" );
-                return false;
+                throw new Exception("Reconciliation System expected 2 file path arguments but received none!" );
+//                return false;
             }
             //verify number of arguments == 2
-            if(args.length != 2){
+            if(args.length < 2){
                 System.out.println("Reconciliation System expected 2 file path arguments but received " + args.length + "!" );
-                return false;
+                throw new Exception("Reconciliation System expected 2 file path arguments but received " + args.length + "!");
+//                return false;
             }
+
+            tempStr_valueColsIndexes.add("-1");
+
+            if(((args.length >= 3) && (args.length < 5)) || args.length > 5)  {
+                throw new Exception("Reconciliation System received " + args.length + " arguments when 2 or 5 arguments expected ! Please refer to github page for syntax.");
+            }
+
+            if(args.length >= 3){
+                //check if arguments are valid
+                //arg3 == list of cols to check value for
+                verifyAndSetValueColumns(args[2]);
+            }
+
+            if(args.length >= 4){
+                //check if arguments are valid
+                // arg4 == set headers
+                verifyAndSetInputHeaders(args[3]);
+            }
+
+            if(args.length == 5){
+                //check if arguments are valid
+                // arg4 == set headers
+                verifyAndSetOutputHeaders(args[4]);
+            }
+
+
             //verify file path exists
             boolean file1Exists = doesFileExists(0, args);
             boolean file2Exists = doesFileExists(1, args);
@@ -62,11 +94,89 @@ public class Reconciliation {
             }
             throw e;
         }
+    }
+
+    private void verifyAndSetValueColumns(String arg) throws Exception {
+        tempStr_valueColsIndexes= new ArrayList<>();
+        //contains comma
+        if (arg.toLowerCase().contains(",")) {
+            tempStr_valueColsIndexes = new ArrayList<String>(Arrays.asList(arg.replaceAll("\\s","").split(",")));
+        }
+        else {
+            tempStr_valueColsIndexes.add(arg.replaceAll("\\s",""));
+        }
+
+        //check if all are valid int
+        for (int counter = 0; counter < tempStr_valueColsIndexes.size(); counter++) {
+            try{
+                Integer.parseInt( (String) tempStr_valueColsIndexes.get(counter));
+            }
+            catch (NumberFormatException e){
+                System.out.println("Input String cannot be parsed to Integer. Input String value:"+arg);
+                throw new Exception("Invalid 3rd argument for Value Columns passed. Argument did not contain numeric value/s. 3rd argument received was: " + arg);
+            }
+        }
+
+    }
+
+    private void setValueColumnsIndexes(int size_of_data_cols) throws Exception {
+        //check if all are valid int
+        valueColsIndexes = new ArrayList<>();
+        for (int counter = 0; counter < tempStr_valueColsIndexes.size(); counter++) {
+            try{
+                Integer myIndexInt = Integer.parseInt( (String) tempStr_valueColsIndexes.get(counter));
+                if(myIndexInt>=size_of_data_cols){
+                    throw new Exception("ValueColIndex with value of "+ myIndexInt + ", is beyond last valid ValueColIndex of " + String.valueOf(size_of_data_cols-1) );
+                }
+                if(myIndexInt<0){
+                    myIndexInt = myIndexInt + size_of_data_cols;
+                }
+                if(!valueColsIndexes.contains(myIndexInt)){
+                    valueColsIndexes.add(myIndexInt);
+                }
+            }
+            catch (NumberFormatException e){
+                throw new Exception("Invalid myIndexInt Value:" + String.valueOf((String) tempStr_valueColsIndexes.get(counter)));
+            }
+        }
+
+        Collections.sort(valueColsIndexes);
+        System.out.println("Size of data columns:" + String.valueOf(size_of_data_cols));
+        System.out.println("ValueColIndexes:" + String.valueOf(valueColsIndexes));
+
+        if(valueColsIndexes.size() >= size_of_data_cols){
+            throw new Exception("Can't set all available columns as ValueCols. No unique identifier columns left.");
+        }
+
 
 
     }
 
+    private void verifyAndSetInputHeaders(String arg) throws Exception {
+        arg = arg.toLowerCase();
+        if ( arg.equals("inputheader") ) {
+            hasHeaders = true;
+        }
+        else if ( arg.equals("inputnoheader") ) {
+            hasHeaders = false;
+        }
+        else{
+            throw new Exception("Invalid 4th argument for inputheader/inputnoheader passed. 4th argument recieved was: " + arg);
+        }
+    }
 
+    private void verifyAndSetOutputHeaders(String arg) throws Exception {
+        arg = arg.toLowerCase();
+        if ( arg.equals("outputheader") ) {
+            hasOutputHeaders = true;
+        }
+        else if ( arg.equals("outputnoheader") ) {
+            hasOutputHeaders = false;
+        }
+        else{
+            throw new Exception("Invalid 5th argument for outputheader/outputnoheader passed. 5th argument recieved was: " + arg);
+        }
+    }
 
     private String getCommaSeperatedStringFromArray(String[] arr1, int start_index,int end_index){
         String concat_str = "";
@@ -76,27 +186,41 @@ public class Reconciliation {
         return concat_str;
     }
 
-    private boolean checkArrayStringMatch(String[] arr1, String[] arr2,int start_index,int end_index){
+    private boolean checkArrayStringMatch(String[] arr1, String[] arr2,int start_index,int end_index, boolean use_valueColsIndexes){
+
 
         for(int i=start_index;i<=end_index;i++){
+
+            int temp_array_index = i-start_index;
+            if (use_valueColsIndexes == true)
+            {
+                if(valueColsIndexes.contains(temp_array_index))
+                {
+                    continue;
+                }
+            }
 
             if(!arr1[i].equals(arr2[i])){
                 return false;
             }
+
+
         }
         return true;
     }
 
 
-    private boolean doesFileExists(int index, String[] args) {
+    private boolean doesFileExists(int index, String[] args) throws Exception {
         Path file = Path.of(args[index]);
         boolean fileExists = Files.exists(file);
         if(!fileExists) {
-            System.out.println("File doesn't exist for the " + ordinal(index+1) + " file path argument: " +  args[index] );
+            System.out.println("File doesn't exist for the " + ordinal(index+1) + " file path ("+file.toAbsolutePath()+") argument: " +  args[index] );
+            throw new Exception("File doesn't exist for the " + ordinal(index+1) + " file path ("+file.toAbsolutePath()+") argument: " +  args[index] );
         }
         else if(!file.toString().toLowerCase().endsWith(".csv")){
-            System.out.println(ordinal(index+1) + " file path argument doesn't end with .csv: " +  args[index] );
+            System.out.println(ordinal(index+1) + " file path ("+file.toAbsolutePath()+") argument doesn't end with .csv: " +  args[index] );
             fileExists = false;
+            throw new Exception(ordinal(index+1) + " file path ("+file.toAbsolutePath()+") argument doesn't end with .csv: " +  args[index] );
         }
         return fileExists;
     }
@@ -141,7 +265,7 @@ public class Reconciliation {
 
 
             try (BufferedReader br = Files.newBufferedReader(file)) {
-                list1 = br.lines().map(s -> s.trim()).filter(s -> !s.isBlank()).collect(Collectors.toList());
+                list1 = br.lines().map(s -> s.trim().replaceAll("\"","")).filter(s -> !s.isBlank()).collect(Collectors.toList());
             } catch (IOException e) {
                 System.out.println("File "+String.valueOf(count)+" ("+file.toAbsolutePath()+") failed to load!");
                 throw e;
@@ -247,6 +371,8 @@ public class Reconciliation {
 
             }
 
+            setValueColumnsIndexes(array1[0].length-2);
+
             //currently, assuming there are no duplicates in each of the files
             outputMismatchArray = new ArrayList<>();
             outputFile1MissingArray = new ArrayList<>();
@@ -269,6 +395,14 @@ public class Reconciliation {
             mergeDuplicateArrays(array1_duplicates, 1, File1);
             mergeDuplicateArrays(array2_duplicates, 2, File2);
 
+            //if input has header check and see if the same
+            if (hasHeaders) {
+                //see if headers match
+                if(!checkArrayStringMatch(array1[0],array2[0],0,array1[0].length-1, false)){
+                    throw new Exception("Headers expected in Input CSV files, but the 2 Input CSV files' headers do not match.");
+                }
+            }
+
             for (int i = 0; i < array1.length; i++) {
                 //assuming columns are in the same order for the 2 files
                 if(array1[i][0] == "unchecked"){
@@ -276,26 +410,55 @@ public class Reconciliation {
                     for (int j = 0; j < array2.length; j++) {
                         if(array2[j][0] == "unchecked"){
 
-                            if(checkArrayStringMatch(array1[i],array2[j],2,array1[0].length-2)){
+                            if(checkArrayStringMatch(array1[i],array2[j],2,array1[0].length-1, true)){
 
                                 //check if balance is same or not
                                 //assumption: string comparison is sufficient
-                                if(array1[i][array1[0].length-1].equals(array2[j][array1[0].length-1])){
-                                    //match
-                                    array1[i][0]="matched";
-                                    array2[j][0]="matched";
-                                }
-                                else
+
+                                //use valueColsIndexes
+                                String mismatched_err_msg = "";
+                                for (int x=0; x<valueColsIndexes.size(); x++)
                                 {
-                                    //mismatch
-                                    array1[i][0]="mismatched";
-                                    array2[j][0]="mismatched";
-                                    //add to new outputarray
-                                    outputMismatchArray.add("mismatched_value,file1,"+File1.toAbsolutePath().toString()+getCommaSeperatedStringFromArray(array1[i],1,array1[i].length-1));
-                                    outputMismatchArray.add("mismatched_value,file2,"+File2.toAbsolutePath().toString()+getCommaSeperatedStringFromArray(array2[j],1,array2[j].length-1));
+                                    Integer valueColsIndexes_val = (Integer)valueColsIndexes.get(x);
+                                    if(array1[i][valueColsIndexes_val+2].equals(array2[j][valueColsIndexes_val+2])){
+                                        //match
+                                        if(!array1[i][0].equals("mismatched")) {
+                                            array1[i][0]="matched";
+                                            array2[j][0]="matched";
+                                        }
+                                    }
+                                    else
+                                    {
+                                        String temp_col_name = "Column "+String.valueOf(valueColsIndexes_val+1);
+                                        if(hasHeaders == true){
+                                            temp_col_name=array1[0][valueColsIndexes_val+2].replaceAll("\"","");
+                                        }
+
+                                        //mismatch
+                                        if(array1[i][0].equals("matched") || array1[i][0].equals("unchecked")) {
+                                            array1[i][0]="mismatched";
+                                            array2[j][0]="mismatched";
+                                            mismatched_err_msg=temp_col_name+" mismatched";
+                                        }
+                                        else{
+                                            mismatched_err_msg+=";"+temp_col_name+" mismatched";
+                                        }
+
+                                    }
+
                                 }
+
+                                if(array1[i][0].equals("mismatched"))
+                                {
+                                    //add to new outputarray
+                                    outputMismatchArray.add(mismatched_err_msg+",file1,"+File1.toAbsolutePath().toString()+getCommaSeperatedStringFromArray(array1[i],1,array1[i].length-1));
+                                    outputMismatchArray.add(mismatched_err_msg+",file2,"+File2.toAbsolutePath().toString()+getCommaSeperatedStringFromArray(array2[j],1,array2[j].length-1));
+
+                                }
+
                                 //break out of for loop
                                 break;
+
                             }
 
                         }
@@ -304,7 +467,7 @@ public class Reconciliation {
                     if(array1[i][0] == "unchecked"){
                         array1[i][0] = "missing";
                         //add to new outputarray
-                        outputFile1MissingArray.add("exists_in_file1_but_missing_in_file2,file1,"+File1.toAbsolutePath().toString()+getCommaSeperatedStringFromArray(array1[i],1,array1[i].length-1));
+                        outputFile1MissingArray.add("Exists in file1 but missing in file2,file1,"+File1.toAbsolutePath().toString()+getCommaSeperatedStringFromArray(array1[i],1,array1[i].length-1));
                     }
                 }
             }
@@ -313,7 +476,7 @@ public class Reconciliation {
                 if (array2[j][0] == "unchecked") {
                     array2[j][0] = "missing";
                     //add to new outputarray
-                    outputFile2MissingArray.add("exists_in_file2_but_missing_in_file1,file2,"+File2.toAbsolutePath().toString()+getCommaSeperatedStringFromArray(array2[j],1,array2[j].length-1));
+                    outputFile2MissingArray.add("Exists in file2 but missing in file1,file2,"+File2.toAbsolutePath().toString()+getCommaSeperatedStringFromArray(array2[j],1,array2[j].length-1));
                 }
             }
 
@@ -337,7 +500,7 @@ public class Reconciliation {
 
         for (int i = 0; i < array1_duplicates.size(); i++) {
             String[] array1_duplicates_arr = (String[]) array1_duplicates.get(i);
-            outputDuplicateArray.add("ambiguous_duplicate_identifier,file"+String.valueOf(fileCount)+","+File1.toAbsolutePath().toString()+getCommaSeperatedStringFromArray(array1_duplicates_arr,1,array1_duplicates_arr.length-1));
+            outputDuplicateArray.add("Ambiguous duplicate identifier,file"+String.valueOf(fileCount)+","+File1.toAbsolutePath().toString()+getCommaSeperatedStringFromArray(array1_duplicates_arr,1,array1_duplicates_arr.length-1));
         }
     }
 
@@ -346,7 +509,7 @@ public class Reconciliation {
             if (array_2[j][0] == "unchecked") {
                 for (int i = 0; i < array_1_duplicates_unique_identifiers.size(); i++) {
                     String [] array1_duplicates_unique_identifiers_arr = (String[]) array_1_duplicates_unique_identifiers.get(i);
-                    if(checkArrayStringMatch(array1_duplicates_unique_identifiers_arr,array_2[j],2,array_2[0].length-2)){
+                    if(checkArrayStringMatch(array1_duplicates_unique_identifiers_arr,array_2[j],2,array_2[0].length-1, true)){
                         array_2[j][0] = "duplicate";
                         array_2_duplicates.add(array_2[j]);
                     }
@@ -365,7 +528,7 @@ public class Reconciliation {
                 for (int i_dup = 0; i_dup < array1.length; i_dup++) {
                     //assuming columns are in the same order for the 2 files
                     if (i != i_dup && array1[i_dup][0] == "unchecked") {
-                        if(checkArrayStringMatch(array1[i],array1[i_dup],2,array1[0].length-2)){
+                        if(checkArrayStringMatch(array1[i],array1[i_dup],2,array1[0].length-1, true)){
                             if (array1[i][0] == "unchecked") {
                                 array1[i][0] = "duplicate";
                                 array1_list_dup.add(array1[i]);
@@ -388,25 +551,22 @@ public class Reconciliation {
             outputArray = new ArrayList<>();
             List<String>  formattedOutputArray = new ArrayList<>();
             String colString = "";
-            if(hasHeaders == false){
-                for (int i=1; i<array1[0].length-1; i++){
-                    if(i<array1[0].length-2){
+            if (hasOutputHeaders == true) {
+                if(hasHeaders == false){
+                    for (int i=1; i<array1[0].length-1; i++){
                         colString+=",Column"+i;
                     }
-                    else{
-                        colString+=",Value";
+                }
+                else{
+                    for (int i=2; i<array1[0].length; i++){
+                        colString+="," + array1[0][i];
                     }
-                }
-            }
-            else{
-                for (int i=2; i<array1[0].length; i++){
-                    colString+="," + array1[0][i];
-                }
 //                colString=colString.substring(1);
 
+                }
+                outputArray.add("MismatchType,File,FilePath,LineNumber"+colString);
             }
 
-            outputArray.add("MismatchType,File,FilePath,LineNumber"+colString);
             outputArray.addAll(outputDuplicateArray);
             outputArray.addAll(outputMismatchArray);
             outputArray.addAll(outputFile1MissingArray);

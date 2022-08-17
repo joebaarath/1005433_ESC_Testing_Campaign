@@ -70,8 +70,17 @@ public class ReconciliationTest {
 
     @ParameterizedTest(name = "{index} - isArgumentsValid input_args={0}, expectedValidity={1}")
     @MethodSource
-    void isArgumentsValid(String[] input, boolean expected) {
-        assertEquals(expected,recon.isArgumentsValid(input) );
+    void isArgumentsValid(String[] input, boolean expected) throws Exception {
+
+        if(expected == true)
+        {
+            assertEquals(expected,recon.isArgumentsValid(input) );
+        }
+        else
+        {
+            // expect to throw exception
+            assertThrows(Exception.class,() -> recon.isArgumentsValid(input) );
+        }
     }
 
     public static Stream<Arguments> loadFiles() {
