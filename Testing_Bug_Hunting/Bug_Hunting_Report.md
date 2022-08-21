@@ -1,13 +1,12 @@
-﻿
-**ESC BUG HUNTING TEST REPORT**
+## ESC BUG HUNTING TEST REPORT
 
-**Tester**: [Joe] Baarath S/O Sellathurai (1005433)
-**Method of Testing**: Fuzzing
-**Implementation 1’s Author**: [Charles] Lim Thian Yew (1003158)
-**Implementation 2’s Author**: [Daniel] Koh Aik Hong  (1005139)
+**Tester**: [Joe] Baarath S/O Sellathurai (1005433)<br>
+**Method of Testing**: Fuzzing<br>
+**Implementation 1’s Author**: [Charles] Lim Thian Yew (1003158)<br>
+**Implementation 2’s Author**: [Daniel] Koh Aik Hong  (1005139)<br>
 
-**Background on Fuzzer**
-The default fuzzing test has 5 main sections.
+### Background on Fuzzer<br>
+The default fuzzing test has 5 main sections.<br>
 The 1st section generates 1 **valid** CSV (w/ **random characters**), 1 **valid mutated** CSV (based on the 1st valid csv), 1 **invalid** csv (copy of the 1st valid csv w/ an **additional comma** inserted at a random line), another 1 **invalid** csv (copy of the 1st valid csv w/ a randomly selected **line to be reduced** into half).
 
 The 2nd section passes the generated csv files to the implementation program using python’s subprocesses and return the error code and a flag to check if an output csv was generated. For this fuzzing I focus soely on scenario 1 and where only the last column is used for mismatch value comparasion.
@@ -19,12 +18,10 @@ The 4th section compares the 1st valid csv with the 1st invalid csv (w/ an addit
 The 5th section compares the 1st valid csv with the 2nd invalid csv (w/ 1 reduced line) and repeats again in vice versa order. This section checks if the 3rd party implementation can identitfy that 1 of the line is reduced and throw a valid error.
 
 After completing all 5 sections, the fuzzer generates a log file which details the success and failed test cases and the failed csv files content for inspection.
-**
 
+### Testing Implementation 1 {[Charles] Lim Thian Yew (1003158)}
 
-**Testing Implementation 1 {[Charles] Lim Thian Yew (1003158)}
-
-Note**: All Fuzzing test code, log details and bug evidence 
+**Note**: All Fuzzing test code, log details and bug evidence 
 are stored in “Testing\_Bug\_Hunting\Testing\_Charles\_Code”
 
 ||**Bugs**|**Comments** |
@@ -35,9 +32,9 @@ are stored in “Testing\_Bug\_Hunting\Testing\_Charles\_Code”
 |**4**|Unhandled duplicate record|Duplicate records are not accounted for.|
 |**5**|Unhandled missing record|Missing records are not accounted for.|
 
-**Testing Implementation 2 {[Daniel] Koh Aik Hong  (1005139)}
+### Testing Implementation 2 {[Daniel] Koh Aik Hong  (1005139)}
 
-Note**: All Fuzzing test code, log details and bug evidence 
+**Note**: All Fuzzing test code, log details and bug evidence 
 are stored in “Testing\_Bug\_Hunting\Testing\_Daniel\_Code”
 
 ||**Bugs**|**Comments**|
@@ -46,6 +43,5 @@ are stored in “Testing\_Bug\_Hunting\Testing\_Daniel\_Code”
 |**2**|Unhandled invalid additional comma|When additional commas were added, the program still resume with comparasion without throwing an error.|
 |**3**|Unhandled missing record|Missing records are not accounted for.|
 |**4**|Unhandled duplicate record|Duplicate records are not accounted for.|
-**
 
 
