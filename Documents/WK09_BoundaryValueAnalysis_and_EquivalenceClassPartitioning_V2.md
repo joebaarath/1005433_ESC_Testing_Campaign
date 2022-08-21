@@ -1,9 +1,6 @@
 ﻿ID: 1005433
-
 NAME: BAARATH
-
 COHORT: 02
-
 ESC: Software Testing Mini Campaign
 
 **Equivalence Class Parititoning & Boundary Value Analysis**
