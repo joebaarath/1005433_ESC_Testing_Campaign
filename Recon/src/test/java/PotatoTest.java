@@ -71,7 +71,7 @@ public class PotatoTest {
         to each other without error, and make sure that no errors
         are raised when we run our program through the files
 
-        same as v2 but we randomly reorder the columns on both files
+        we randomly reorder the columns on both files
         as well to see that it make the comparison even with differently
         ordered columns
         */
