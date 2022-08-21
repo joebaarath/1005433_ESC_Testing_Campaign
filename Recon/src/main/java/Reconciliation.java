@@ -88,7 +88,7 @@ public class Reconciliation {
             for (String arg_str : args)
             {
                 counter++;
-                System.out.println(ordinal(counter) + "argument: " + arg_str );
+                System.out.println(ordinal(counter) + " argument: " + arg_str );
             }
             throw e;
         }

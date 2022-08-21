@@ -15,16 +15,16 @@ from tokenize import String
 duplicate_key_word="duplicate" #Default: "duplicate"
 mismatch_key_word="mismatch" #Default: "mismatch"
 missing_key_word="missing" #Default: "missing"
-no_mismatch_type_display_use_only_mismatch_count=False #Default: False
-check_error_code=True #Default: True
+no_mismatch_type_display_use_only_mismatch_count=True #Default: False
+check_error_code=False #Default: True
 csv_key_word_col_check=0 #Default: 0
-output_csv_has_header=True #Default: True
+output_csv_has_header=False #Default: False
 input_csv_has_header=True #Default: True
 errorLogFileName="FuzzerLog.log"  #Default: "FuzzerLog.log"
 global enable_punctuation_in_generated_csv
 enable_punctuation_in_generated_csv=True #Default: True
 global prog
-prog="jar_joe" #Default: "jar_joe" #options: "java_daniel", "java_charles", "jar_joe"
+prog="java_charles" #Default: "jar_joe" #options: "java_daniel", "java_charles", "jar_joe"
 global numOfLoopTest
 numOfLoopTest = 25
 
