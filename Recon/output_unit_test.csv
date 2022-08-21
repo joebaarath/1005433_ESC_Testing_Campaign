@@ -1,0 +1,7 @@
+Customer ID#,Account No.,Currency,Type,Balance,MismatchType,File,FilePath,LineNumber
+ID99,BOS8059799,SGD,CURRENT,208045,Balance mismatched,file1,/home/milselarch/projects/SUTD/50-003/campaign/testing/1005433_baarath_so/Recon/sample_file_1.csv,100
+ID99,BOS8059799,SGD,CURRENT,208043,Balance mismatched,file2,/home/milselarch/projects/SUTD/50-003/campaign/testing/1005433_baarath_so/Recon/sample_file_3.csv,100
+ID198,BOS30360198,USD,CURRENT,679878,Balance mismatched,file1,/home/milselarch/projects/SUTD/50-003/campaign/testing/1005433_baarath_so/Recon/sample_file_1.csv,199
+ID198,BOS30360198,USD,CURRENT,6798788,Balance mismatched,file2,/home/milselarch/projects/SUTD/50-003/campaign/testing/1005433_baarath_so/Recon/sample_file_3.csv,199
+ID298,BOS50591298,CHF,SAVINGS,988459,Exists in file1 but missing in file2,file1,/home/milselarch/projects/SUTD/50-003/campaign/testing/1005433_baarath_so/Recon/sample_file_1.csv,299
+ID298,BOS50591298,USD,SAVINGS,988459,Exists in file2 but missing in file1,file2,/home/milselarch/projects/SUTD/50-003/campaign/testing/1005433_baarath_so/Recon/sample_file_3.csv,299
